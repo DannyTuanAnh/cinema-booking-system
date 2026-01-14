@@ -1,82 +1,93 @@
 <!DOCTYPE html>
 <html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Đăng ký - Cinema Booking</title>
-    <link rel="stylesheet" href="../assets/css/common.css">
-    <link rel="stylesheet" href="../assets/css/auth.css">
-</head>
-<body>
+    <link rel="stylesheet" href="../assets/css/common.css" />
+    <link rel="stylesheet" href="../assets/css/auth.css" />
+  </head>
+  <body>
     <div class="auth-container">
-        <div class="auth-card">
-            <div class="auth-header">
-                <h1 class="auth-logo">🎬 Cinema Booking</h1>
-                <h2 class="auth-title">Đăng ký</h2>
-                <p class="auth-subtitle">Tạo tài khoản mới</p>
-            </div>
-
-            <form id="registerForm" class="auth-form">
-                <div id="alertContainer"></div>
-
-                <div class="form-group">
-                    <label for="fullName" class="form-label">Họ và tên</label>
-                    <input 
-                        type="text" 
-                        id="fullName" 
-                        name="fullName" 
-                        class="form-input" 
-                        placeholder="Nhập họ và tên"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="email" class="form-label">Email</label>
-                    <input 
-                        type="email" 
-                        id="email" 
-                        name="email" 
-                        class="form-input" 
-                        placeholder="Nhập email của bạn"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="password" class="form-label">Mật khẩu</label>
-                    <input 
-                        type="password" 
-                        id="password" 
-                        name="password" 
-                        class="form-input" 
-                        placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)"
-                        required
-                    >
-                </div>
-
-                <div class="form-group">
-                    <label for="confirmPassword" class="form-label">Xác nhận mật khẩu</label>
-                    <input 
-                        type="password" 
-                        id="confirmPassword" 
-                        name="confirmPassword" 
-                        class="form-input" 
-                        placeholder="Nhập lại mật khẩu"
-                        required
-                    >
-                </div>
-
-                <button type="submit" class="btn btn-primary btn-large btn-block" id="registerBtn">
-                    Đăng ký
-                </button>
-            </form>
-
-            <div class="auth-footer">
-                <p>Đã có tài khoản? <a href="login.html" class="auth-link">Đăng nhập ngay</a></p>
-                <p><a href="../index.html" class="auth-link">← Quay về trang chủ</a></p>
-            </div>
+      <div class="auth-card">
+        <div class="auth-header">
+          <h1 class="auth-logo">🎬 Cinema Booking</h1>
+          <h2 class="auth-title">Đăng ký</h2>
+          <p class="auth-subtitle">Tạo tài khoản mới</p>
         </div>
+
+        <form id="registerForm" class="auth-form">
+          <div id="alertContainer"></div>
+
+          <div class="form-group">
+            <label for="fullName" class="form-label">Họ và tên</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              class="form-input"
+              placeholder="Nhập họ và tên"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="email" class="form-label">Email</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              class="form-input"
+              placeholder="Nhập email của bạn"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password" class="form-label">Mật khẩu</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              class="form-input"
+              placeholder="Nhập mật khẩu (tối thiểu 6 ký tự)"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword" class="form-label"
+              >Xác nhận mật khẩu</label
+            >
+            <input
+              type="password"
+              id="confirmPassword"
+              name="confirmPassword"
+              class="form-input"
+              placeholder="Nhập lại mật khẩu"
+              required
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="btn btn-primary btn-large btn-block"
+            id="registerBtn"
+          >
+            Đăng ký
+          </button>
+        </form>
+
+        <div class="auth-footer">
+          <p>
+            Đã có tài khoản?
+            <a href="login.html" class="auth-link">Đăng nhập ngay</a>
+          </p>
+          <p>
+            <a href="../index.html" class="auth-link">← Quay về trang chủ</a>
+          </p>
+        </div>
+      </div>
     </div>
 
     <script src="../assets/js/config.js"></script>
@@ -84,5 +95,5 @@
     <script src="../assets/js/utils/auth.js"></script>
     <script src="../assets/js/utils/api.js"></script>
     <script src="../assets/js/modules/auth/register.js"></script>
-</body>
+  </body>
 </html>

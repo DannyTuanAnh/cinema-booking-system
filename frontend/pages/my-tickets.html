@@ -3,9 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Chọn suất chiếu - Cinema Booking</title>
+    <title>Vé của tôi - Cinema Booking</title>
     <link rel="stylesheet" href="../assets/css/common.css" />
-    <link rel="stylesheet" href="../assets/css/showtimes.css" />
+    <link rel="stylesheet" href="../assets/css/tickets.css" />
   </head>
   <body>
     <!-- Header -->
@@ -23,8 +23,8 @@
           </div>
           <nav class="nav">
             <a href="../index.html" class="nav-link">Trang chủ</a>
-            <a href="movies.html" class="nav-link active">Phim</a>
-            <a href="my-tickets.html" class="nav-link">Vé của tôi</a>
+            <a href="movies.html" class="nav-link">Phim</a>
+            <a href="my-tickets.html" class="nav-link active">Vé của tôi</a>
           </nav>
           <div class="user-actions">
             <div id="userInfo" class="user-info hidden">
@@ -45,14 +45,7 @@
     <!-- Main Content -->
     <main class="main-content">
       <div class="container">
-        <!-- Back button -->
-        <div class="back-button">
-          <a href="movies.html" class="btn btn-secondary"
-            >← Quay lại danh sách phim</a
-          >
-        </div>
-
-        <h2 class="page-title">Chọn suất chiếu</h2>
+        <h2 class="page-title">Vé đã đặt của tôi</h2>
 
         <!-- Loading State -->
         <div id="loadingContainer" class="loading">
@@ -62,15 +55,19 @@
         <!-- Error State -->
         <div id="errorContainer" class="hidden"></div>
 
-        <!-- Showtimes Container -->
-        <div id="showtimesContainer" class="hidden">
-          <div id="movieInfo" class="movie-info-card"></div>
-          <div id="showtimesList" class="showtimes-list"></div>
+        <!-- Tickets Container -->
+        <div id="ticketsContainer" class="tickets-grid hidden">
+          <!-- Tickets will be dynamically loaded here -->
         </div>
 
         <!-- Empty State -->
         <div id="emptyContainer" class="empty-state hidden">
-          <p>Không có suất chiếu nào cho phim này</p>
+          <div class="empty-icon">🎟️</div>
+          <h3>Chưa có vé nào</h3>
+          <p>Bạn chưa đặt vé xem phim nào. Hãy đặt vé ngay!</p>
+          <a href="movies.html" class="btn btn-primary btn-large"
+            >Đặt vé ngay</a
+          >
         </div>
       </div>
     </main>
@@ -87,6 +84,6 @@
     <script src="../assets/js/utils/auth.js"></script>
     <script src="../assets/js/utils/api.js"></script>
     <script src="../assets/js/components/header.js"></script>
-    <script src="../assets/js/modules/showtimes/showtimes-list.js"></script>
+    <script src="../assets/js/modules/tickets/my-tickets.js"></script>
   </body>
 </html>
