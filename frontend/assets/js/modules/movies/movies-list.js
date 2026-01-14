@@ -129,9 +129,10 @@ async function loadMovies() {
     emptyContainer.classList.add("hidden");
 
     // Fetch movies
-    const movies = await API.get(API_CONFIG.ENDPOINTS.MOVIES);
+    const result = await API.get(API_CONFIG.ENDPOINTS.MOVIES);
+    const movies = result.response;
 
-    if (!movies || movies.length === 0) {
+    if (!Array.isArray(movies) || movies.length === 0) {
       showEmpty();
       return;
     }

@@ -226,11 +226,13 @@ async function loadSeats() {
     seatContainer.classList.add("hidden");
 
     // Fetch seats
-    const seatsData = await API.get(
+    const result = await API.get(
       `${API_CONFIG.ENDPOINTS.SEATS}?show_id=${showId}`
     );
 
-    if (!seatsData || seatsData.length === 0) {
+    const seatsData = result.response;
+
+    if (!Array.isArray(seatsData) || seatsData.length === 0) {
       showError("Không có ghế nào cho suất chiếu này");
       return;
     }

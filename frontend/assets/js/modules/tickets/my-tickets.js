@@ -167,9 +167,11 @@ async function loadTickets() {
     emptyContainer.classList.add("hidden");
 
     // Fetch tickets (requires authentication)
-    const tickets = await API.get(API_CONFIG.ENDPOINTS.MY_TICKETS, true);
+    const result = await API.get(API_CONFIG.ENDPOINTS.MY_TICKETS, true);
 
-    if (!tickets || tickets.length === 0) {
+    const tickets = result.response;
+
+    if (!Array.isArray(tickets) || tickets.length === 0) {
       showEmpty();
       return;
     }

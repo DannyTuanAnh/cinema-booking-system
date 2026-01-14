@@ -7,10 +7,10 @@
 
 const API_CONFIG = {
   // BFF API Base URL
-  BASE_URL: "http://localhost:8080/api",
+  BASE_URL: "http://192.168.1.231:8080/api",
 
   // API Key (generated from backend)
-  API_KEY: "web_f4d7e8a9-4b2c-4d1f-8c9e-3f6a7b2d8e9f_xYz123AbC456", // Replace with actual key
+  API_KEY: "web_65e7e5cb-4cef-4086-99f5-9847ac3b8bd2_dLoXLJedzE3ICDtt", // Replace with actual key
 
   // API Endpoints
   ENDPOINTS: {

@@ -28,7 +28,7 @@ const Auth = {
    */
   logout() {
     Storage.clearAll();
-    window.location.href = "/pages/login.html";
+    window.location.href = "/frontend/pages/login.html";
   },
 
   /**
@@ -36,7 +36,7 @@ const Auth = {
    */
   requireAuth() {
     if (!this.isLoggedIn()) {
-      window.location.href = "/pages/login.html";
+      window.location.href = "/frontend/pages/login.html";
       return false;
     }
     return true;

@@ -195,11 +195,13 @@ async function loadShowtimes() {
     emptyContainer.classList.add("hidden");
 
     // Fetch showtimes
-    const showtimes = await API.get(
+    const result = await API.get(
       `${API_CONFIG.ENDPOINTS.SHOWS}?movie_id=${movieId}`
     );
 
-    if (!showtimes || showtimes.length === 0) {
+    const showtimes = result.response;
+
+    if (!Array.isArray(showtimes) || showtimes.length === 0) {
       showEmpty();
       return;
     }
