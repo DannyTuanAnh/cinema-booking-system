@@ -1,0 +1,120 @@
+/* ============================================
+   SHOWTIMES PAGE STYLES
+   ============================================ */
+
+.back-button {
+    margin-bottom: var(--spacing-lg);
+}
+
+.movie-info-card {
+    background-color: var(--background-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    margin-bottom: var(--spacing-xl);
+    box-shadow: var(--shadow-md);
+}
+
+.movie-info-content {
+    display: flex;
+    gap: var(--spacing-lg);
+}
+
+.movie-info-poster {
+    width: 200px;
+    height: 280px;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.movie-info-details h2 {
+    font-size: 2rem;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-sm);
+}
+
+.movie-info-meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-md);
+    color: var(--text-secondary);
+}
+
+.movie-info-description {
+    color: var(--text-secondary);
+    line-height: 1.6;
+}
+
+.showtimes-list {
+    display: grid;
+    gap: var(--spacing-lg);
+}
+
+.showtime-group {
+    background-color: var(--background-card);
+    border-radius: var(--radius-lg);
+    padding: var(--spacing-lg);
+    box-shadow: var(--shadow-md);
+}
+
+.showtime-date {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: var(--spacing-md);
+    padding-bottom: var(--spacing-sm);
+    border-bottom: 2px solid var(--border-color);
+}
+
+.showtime-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: var(--spacing-md);
+}
+
+.showtime-card {
+    background-color: var(--background-light);
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius-md);
+    padding: var(--spacing-md);
+    text-align: center;
+    transition: all var(--transition-normal);
+    cursor: pointer;
+}
+
+.showtime-card:hover {
+    border-color: var(--primary-color);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.showtime-time {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: var(--spacing-xs);
+}
+
+.showtime-info {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .movie-info-content {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .movie-info-poster {
+        width: 160px;
+        height: 240px;
+    }
+    
+    .showtime-slots {
+        grid-template-columns: 1fr;
+    }
+}
