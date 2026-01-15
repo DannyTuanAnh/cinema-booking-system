@@ -7,7 +7,7 @@ import (
 
 type BookRepository interface {
 	BeginTransaction(ctx context.Context) (*sql.Tx, error)
-	CreateBooking(ctx context.Context, tx *sql.Tx, userID int64, seats []int) error
+	CreateBooking(ctx context.Context, tx *sql.Tx, userID int, seats []int) error
 }
 
 type bookRepo struct {
@@ -24,7 +24,7 @@ func (b *bookRepo) BeginTransaction(ctx context.Context) (*sql.Tx, error) {
 	})
 }
 
-func (b *bookRepo) CreateBooking(ctx context.Context, tx *sql.Tx, userID int64, seats []int) error {
+func (b *bookRepo) CreateBooking(ctx context.Context, tx *sql.Tx, userID int, seats []int) error {
 	for _, seatID := range seats {
 		_, err := tx.ExecContext(
 			ctx,

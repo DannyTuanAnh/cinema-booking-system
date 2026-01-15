@@ -17,7 +17,7 @@ func InitAuthRoutes(r *gin.RouterGroup, db *sql.DB) {
 
 func RegisterAuthRoutes(r *gin.RouterGroup, db *sql.DB) {
 	addr := os.Getenv("ADDR_SERVER")
-	path := "http://" + addr + "/api"
+	path := "https://" + addr + "/api"
 
 	authClient := auth_clients.NewAuthHTTPClient(path)
 

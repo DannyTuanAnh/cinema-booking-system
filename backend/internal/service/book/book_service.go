@@ -19,7 +19,7 @@ func NewBookService(bookRepo repository.BookRepository, seatRepo repository.Seat
 	}
 }
 
-func (s *BookService) BookSeats(ctx context.Context, userID int64, seats []int) error {
+func (s *BookService) BookSeats(ctx context.Context, userID int, seats []int) error {
 
 	log.Println("Starting booking process for user:", userID, "with seats:", seats)
 	tx, err := s.bookRepo.BeginTransaction(ctx)
@@ -29,7 +29,7 @@ func (s *BookService) BookSeats(ctx context.Context, userID int64, seats []int) 
 
 	defer tx.Rollback()
 
-	err = s.seatRepo.BookSeats(ctx, tx, userID, seats)
+	err = s.seatRepo.BookSeats(ctx, tx, seats)
 	if err != nil {
 		return err
 	}

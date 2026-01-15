@@ -39,11 +39,16 @@ func main() {
 	}
 
 	expireHours, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_HOURS"))
+	expireMinutes, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_MINUTES"))
 
 	jwtCfg := jwt.JWTConfig{
-		Secret: os.Getenv("JWT_SECRET"),
 		Issuer: os.Getenv("JWT_ISSUER"),
-		Expire: time.Duration(expireHours) * time.Hour,
+
+		AccessSecret:  os.Getenv("JWT_ACCESS_SECRET"),
+		RefreshSecret: os.Getenv("JWT_REFRESH_SECRET"),
+
+		AccessTokenExpire:  time.Duration(expireMinutes) * time.Minute,
+		RefreshTokenExpire: 7 * time.Duration(expireHours) * time.Hour,
 	}
 	jwtGen := jwt.NewJWTGenerator(jwtCfg)
 
@@ -53,8 +58,9 @@ func main() {
 	seatRepo := repository.NewSeatRepository(database)
 	bookRepo := repository.NewBookRepository(database)
 	ticketRepo := repository.NewTicketRepository(database)
+	rtRepo := repository.NewRefreshTokenRepoPG(database)
 
-	authService := auth_service.NewAuthService(userRepo, jwtGen)
+	authService := auth_service.NewAuthService(rtRepo, userRepo, jwtGen)
 	movieService := movie_service.NewMovieService(movieRepo)
 	showService := show_service.NewShowService(showRepo)
 	seatService := seat_service.NewSeatService(seatRepo)
@@ -78,5 +84,5 @@ func main() {
 
 	addr := os.Getenv("ADDR_SERVER")
 
-	r.Run(addr)
+	r.RunTLS(addr, "../../certs/localhost+2.pem", "../../certs/localhost+2-key.pem")
 }

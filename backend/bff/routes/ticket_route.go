@@ -17,7 +17,7 @@ func InitTicketRoutes(r *gin.RouterGroup, db *sql.DB) {
 
 func RegisterTicketRoutes(r *gin.RouterGroup, db *sql.DB) {
 	addr := os.Getenv("ADDR_SERVER")
-	path := "http://" + addr + "/api"
+	path := "https://" + addr + "/api"
 
 	ticketClient := ticket_clients.NewTicketHTTPClient(path)
 

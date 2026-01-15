@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -11,13 +10,11 @@ import (
 	"cinema.com/demo/bff/routes"
 	"cinema.com/demo/bff/utils"
 	"cinema.com/demo/infra/db"
+	pkgFile "cinema.com/demo/pkg/file"
 	jwt "cinema.com/demo/pkg/jwt_service"
+	key "cinema.com/demo/pkg/key"
 
-	"strings"
-
-	repo "cinema.com/demo/bff/repository"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -29,17 +26,16 @@ func main() {
 	}
 	defer database.Close()
 
+	// Register validator for struct
 	if err := utils.RegisterValidator(); err != nil {
 		panic(err)
 	}
 
-	err = godotenv.Load("../../../.env")
-	if err != nil {
-		log.Println("No .env file found")
-		panic(err)
-	}
+	fileEnv := "../../../.env"
 
-	// Kiểm tra nếu có arguments để tạo API key
+	pkgFile.LoadEnv(fileEnv)
+
+	// Check if command-line arguments are provided for API key generation
 	if len(os.Args) >= 4 {
 		clientType := os.Args[1]
 
@@ -53,66 +49,25 @@ func main() {
 			log.Fatalf("Invalid winSec parameter: %v", err)
 		}
 
-		// Tạo API key
-		apiRepo := repo.NewApiKeyRepo(database)
-
-		exits, _ := apiRepo.ExistsByClient(clientType)
-		if !exits {
-			plaintext := utils.GenerateApiKey(clientType)
-			hash := utils.HashApiKey(plaintext)
-
-			if err := apiRepo.Insert(clientType, hash, maxReq, winSec); err != nil {
-				log.Fatal(err)
-			}
-			if clientType == "web" {
-
-				// Append to .env
-				envLine := fmt.Sprintf("\nVITE_API_KEY=%s\n", plaintext)
-
-				f, err := os.OpenFile("../../../.env", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-				if err != nil {
-					log.Fatal(err)
-				}
-				defer f.Close()
-
-				if _, err := f.WriteString(envLine); err != nil {
-					log.Fatal(err)
-				}
-
-				log.Printf("API key created successfully for client: %s", clientType)
-				log.Printf("VITE_API_KEY=%s", plaintext)
-
-			} else {
-
-				// Append to .env
-				envLine := fmt.Sprintf("\nAPI_KEY_%s=%s\n", strings.ToUpper(clientType), plaintext)
-
-				f, err := os.OpenFile("../../../frontend/.env", os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0600)
-				if err != nil {
-					log.Fatal(err)
-				}
-				defer f.Close()
-
-				if _, err := f.WriteString(envLine); err != nil {
-					log.Fatal(err)
-				}
-
-				log.Printf("API key created successfully for client: %s", clientType)
-				log.Printf("API_KEY_%s=%s", strings.ToUpper(clientType), plaintext)
-			}
-		} else {
-			log.Printf("API key already exists for client: %s", clientType)
+		// Generate the API key
+		err = key.GenerateAPIKey(fileEnv, clientType, maxReq, winSec, database)
+		if err != nil {
+			log.Fatalf("Failed to generate API key: %v", err)
 		}
 
-		return // Kết thúc chương trình sau khi tạo API key
+		return // Close the application after generating the API key
 	}
 
 	expireHours, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_HOURS"))
+	expireMinutes, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_MINUTES"))
 
 	jwtCfg := jwt.JWTConfig{
-		Secret: os.Getenv("JWT_SECRET"),
 		Issuer: os.Getenv("JWT_ISSUER"),
-		Expire: time.Duration(expireHours) * time.Hour,
+
+		AccessSecret: os.Getenv("JWT_ACCESS_SECRET"),
+
+		AccessTokenExpire:  time.Duration(expireMinutes) * time.Minute,
+		RefreshTokenExpire: 7 * time.Duration(expireHours) * time.Hour,
 	}
 
 	jwtValidator := jwt.NewValidator(jwtCfg)
@@ -142,5 +97,10 @@ func main() {
 
 	addr := os.Getenv("ADDR_BFF_SERVER")
 
-	r.Run(addr)
+	err = r.RunTLS(addr, "../../certs/localhost+2.pem", "../../certs/localhost+2-key.pem")
+
+	if err != nil {
+		log.Fatalf("Failed to run server: %v", err)
+	}
+
 }

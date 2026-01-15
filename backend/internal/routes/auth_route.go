@@ -8,4 +8,5 @@ import (
 func InitAuthRoutes(r *gin.RouterGroup, ctrl *controller.AuthController) {
 	r.POST("/auth/login", ctrl.Login)
 	r.POST("/auth/register", ctrl.Register)
+	r.POST("/auth/refresh", ctrl.Refresh)
 }

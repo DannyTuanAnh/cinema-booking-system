@@ -3,7 +3,7 @@ package auth
 import (
 	"net/http"
 
-	"cinema.com/demo/bff/clients/auth"
+	auth_clients "cinema.com/demo/bff/clients/auth"
 	"cinema.com/demo/bff/dto"
 	"cinema.com/demo/bff/utils"
 	"github.com/gin-gonic/gin"
@@ -27,13 +27,18 @@ func (ac *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	resp, err := ac.authClient.Login(ctx, auth_clients.LoginRequest{
+	resp, cookies, err := ac.authClient.Login(ctx, auth_clients.LoginRequest{
 		Email:    param.Email,
 		Password: param.Password,
 	})
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
+	}
+
+	// relay cookies từ core → client
+	for _, cookie := range cookies {
+		http.SetCookie(ctx.Writer, cookie)
 	}
 
 	ctx.JSON(http.StatusOK, gin.H{"response": resp})
@@ -57,4 +62,27 @@ func (ac *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "registration successful"})
+}
+
+func (ac *AuthController) RefreshToken(ctx *gin.Context) {
+	cookie, err := ctx.Request.Cookie("refresh_token")
+
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "refresh token not found"})
+		return
+	}
+
+	resp, cookies, err := ac.authClient.RefreshToken(ctx, cookie.Value)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
+		return
+	}
+
+	// relay cookies từ core → client
+	for _, cookie := range cookies {
+		http.SetCookie(ctx.Writer, cookie)
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{"response": resp})
+
 }

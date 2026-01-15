@@ -33,7 +33,7 @@ func (b *BookController) Book(ctx *gin.Context) {
 		return
 	}
 
-	// convert userId type any to int64
+	// convert userId type any to int
 	userIdInt, ok := userId.(int)
 	if !ok {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "invalid userID type"})

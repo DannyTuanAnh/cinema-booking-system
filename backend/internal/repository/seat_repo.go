@@ -12,7 +12,7 @@ import (
 
 type SeatRepository interface {
 	GetSeatByShowID(ctx context.Context, show_id int) ([]model.Seat, error)
-	BookSeats(ctx context.Context, tx *sql.Tx, userID int64, seats []int) error
+	BookSeats(ctx context.Context, tx *sql.Tx, seats []int) error
 }
 
 type seatRepo struct {
@@ -53,7 +53,7 @@ func (s *seatRepo) GetSeatByShowID(ctx context.Context, show_id int) ([]model.Se
 	return seats, nil
 }
 
-func (s *seatRepo) BookSeats(ctx context.Context, tx *sql.Tx, userID int64, seats []int) error {
+func (s *seatRepo) BookSeats(ctx context.Context, tx *sql.Tx, seats []int) error {
 
 	res, err := tx.ExecContext(
 		ctx,

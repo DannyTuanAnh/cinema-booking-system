@@ -11,6 +11,7 @@ import (
 type UserRepository interface {
 	FindByEmail(ctx context.Context, email string) (*model.User, error)
 	CreateUser(ctx context.Context, user *model.User) error
+	FindByID(ctx context.Context, id int64) (*model.User, error)
 }
 
 type userRepo struct {
@@ -28,6 +29,21 @@ func (r *userRepo) FindByEmail(ctx context.Context, email string) (*model.User, 
 		`SELECT user_id, full_name, email, password FROM users WHERE email = $1`,
 		email,
 	).Scan(&u.ID, &u.FullName, &u.Email, &u.PasswordHash)
+
+	if err != nil {
+		return nil, errors.New("user not found")
+	}
+
+	return &u, nil
+}
+
+func (r *userRepo) FindByID(ctx context.Context, id int64) (*model.User, error) {
+	var u model.User
+
+	err := r.db.QueryRowContext(ctx,
+		`SELECT user_id, full_name, email FROM users WHERE user_id = $1`,
+		id,
+	).Scan(&u.ID, &u.FullName, &u.Email)
 
 	if err != nil {
 		return nil, errors.New("user not found")

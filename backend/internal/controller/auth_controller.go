@@ -23,15 +23,25 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		return
 	}
 
-	token, userID, email, name, err := c.authService.Login(ctx.Request.Context(), req.Email, req.Password)
+	access, refresh, userID, email, name, err := c.authService.Login(ctx.Request.Context(), req.Email, req.Password)
 
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": err.Error()})
 		return
 	}
 
+	http.SetCookie(ctx.Writer, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    refresh,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+		Path:     "/auth/refresh",
+		MaxAge:   int(c.authService.RefreshTokenMaxAge().Seconds()),
+	})
+
 	ctx.JSON(http.StatusOK, model.LoginResponse{
-		AccessToken: token,
+		AccessToken: access,
 		UserID:      userID,
 		Email:       email,
 		Name:        name,
@@ -55,4 +65,34 @@ func (c *AuthController) Register(ctx *gin.Context) {
 		return
 	}
 	ctx.JSON(http.StatusOK, gin.H{"message": "Registration successful"})
+}
+
+func (c *AuthController) Refresh(ctx *gin.Context) {
+	rt, err := ctx.Cookie("refresh_token")
+
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "missing refresh token"})
+		return
+	}
+
+	access, refresh, err := c.authService.Refresh(ctx, rt)
+	if err != nil {
+		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "token reuse detected"})
+		return
+	}
+
+	maxAge := int(c.authService.RefreshTokenMaxAge().Seconds())
+
+	// set new refresh cookie
+	http.SetCookie(ctx.Writer, &http.Cookie{
+		Name:     "refresh_token",
+		Value:    refresh,
+		HttpOnly: true,
+		Secure:   true,
+		SameSite: http.SameSiteStrictMode,
+		Path:     "/auth/refresh",
+		MaxAge:   maxAge,
+	})
+
+	ctx.JSON(http.StatusOK, gin.H{"access_token": access})
 }

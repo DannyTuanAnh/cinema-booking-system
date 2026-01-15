@@ -23,22 +23,22 @@ func NewAuthHTTPClient(baseURL string) AuthClient {
 	}
 }
 
-func (c *authHTTPClient) Login(ctx context.Context, req LoginRequest) (*LoginResponse, error) {
+func (c *authHTTPClient) Login(ctx context.Context, req LoginRequest) (*LoginResponse, []*http.Cookie, error) {
 	body, err := json.Marshal(req)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/auth/login", bytes.NewBuffer(body))
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
 	httpReq.Header.Set("Content-Type", "application/json")
 
 	resp, err := c.http.Do(httpReq)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 	defer resp.Body.Close()
 
@@ -46,20 +46,20 @@ func (c *authHTTPClient) Login(ctx context.Context, req LoginRequest) (*LoginRes
 	if resp.StatusCode != http.StatusOK {
 		var errorResp map[string]interface{}
 		if err := json.NewDecoder(resp.Body).Decode(&errorResp); err != nil {
-			return nil, fmt.Errorf("login failed with status %d", resp.StatusCode)
+			return nil, nil, fmt.Errorf("login failed with status %d", resp.StatusCode)
 		}
 		if errMsg, ok := errorResp["error"]; ok {
-			return nil, fmt.Errorf("%v", errMsg)
+			return nil, nil, fmt.Errorf("%v", errMsg)
 		}
-		return nil, fmt.Errorf("login failed with status %d", resp.StatusCode)
+		return nil, nil, fmt.Errorf("login failed with status %d", resp.StatusCode)
 	}
 
 	var loginResp LoginResponse
 	if err := json.NewDecoder(resp.Body).Decode(&loginResp); err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return &loginResp, nil
+	return &loginResp, resp.Cookies(), nil
 }
 
 func (c *authHTTPClient) Register(ctx context.Context, req RegisterRequest) error {
@@ -93,4 +93,44 @@ func (c *authHTTPClient) Register(ctx context.Context, req RegisterRequest) erro
 	}
 
 	return nil
+}
+
+func (c *authHTTPClient) RefreshToken(ctx context.Context, refreshToken string) (*LoginResponse, []*http.Cookie, error) {
+	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/auth/refresh", nil)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	httpReq.AddCookie(&http.Cookie{
+		Name:  "refresh_token",
+		Value: refreshToken,
+	})
+
+	resp, err := c.http.Do(httpReq)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	defer resp.Body.Close()
+
+	// Kiểm tra status code từ core server
+	if resp.StatusCode != http.StatusOK {
+		var errorResp map[string]interface{}
+		if err := json.NewDecoder(resp.Body).Decode(&errorResp); err != nil {
+			return nil, nil, fmt.Errorf("refresh failed with status %d", resp.StatusCode)
+		}
+
+		if errMsg, ok := errorResp["error"]; ok {
+			return nil, nil, fmt.Errorf("%v", errMsg)
+		}
+
+		return nil, nil, fmt.Errorf("refresh failed with status %d", resp.StatusCode)
+	}
+
+	var refreshResp LoginResponse
+	if err := json.NewDecoder(resp.Body).Decode(&refreshResp); err != nil {
+		return nil, nil, err
+	}
+
+	return &refreshResp, resp.Cookies(), nil
 }

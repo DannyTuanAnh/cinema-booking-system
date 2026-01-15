@@ -40,11 +40,16 @@ func (m *JWTMiddleware) Handle() gin.HandlerFunc {
 
 		tokenString := parts[1]
 
-		claims, err := m.validator.Validate(c.Request.Context(), tokenString)
+		claims, err := m.validator.ValidateAccess(c.Request.Context(), tokenString)
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
-				"error": "invalid or expired token",
-			})
+			switch err {
+			case jwt.ErrExpiredToken:
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token expired"})
+			case jwt.ErrInvalidIssuer:
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token issuer"})
+			default:
+				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token"})
+			}
 			return
 		}
 

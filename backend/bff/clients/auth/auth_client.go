@@ -1,6 +1,9 @@
 package auth_clients
 
-import "context"
+import (
+	"context"
+	"net/http"
+)
 
 type LoginRequest struct {
 	Email    string `json:"email"`
@@ -21,6 +24,7 @@ type LoginResponse struct {
 }
 
 type AuthClient interface {
-	Login(ctx context.Context, req LoginRequest) (*LoginResponse, error)
+	Login(ctx context.Context, req LoginRequest) (*LoginResponse, []*http.Cookie, error)
 	Register(ctx context.Context, req RegisterRequest) error
+	RefreshToken(ctx context.Context, refreshToken string) (*LoginResponse, []*http.Cookie, error)
 }
