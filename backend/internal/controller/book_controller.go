@@ -3,6 +3,7 @@ package controller
 import (
 	"net/http"
 
+	"cinema.com/demo/internal/domain"
 	"cinema.com/demo/internal/model"
 	book_service "cinema.com/demo/internal/service/book"
 	"github.com/gin-gonic/gin"
@@ -25,7 +26,13 @@ func (b *BookController) Book(ctx *gin.Context) {
 
 	err := b.bookService.BookSeats(ctx.Request.Context(), req.UserID, req.Seats)
 	if err != nil {
-		ctx.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+
+		if err == domain.ErrSeatAlreadyBooked {
+			ctx.JSON(http.StatusConflict, gin.H{"error": "One or more seats are already booked"})
+			return
+		}
+
+		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to book seats"})
 		return
 	}
 

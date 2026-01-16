@@ -286,7 +286,16 @@ async function handleBooking() {
     window.location.href = "my-tickets.html";
   } catch (error) {
     console.error("Booking error:", error);
-    alert(error.message);
+
+    // Xử lý lỗi conflict (409)
+    if (error.status === 409) {
+      alert(
+        "Một hoặc nhiều ghế bạn chọn đã được đặt trước đó. Vui lòng chọn lại."
+      );
+    } else {
+      // Các lỗi khác
+      alert(error.message);
+    }
 
     // Reset state
     isBooking = false;

@@ -12,5 +12,5 @@ type GetTicketByUserIdResponse struct {
 }
 
 type TicketClient interface {
-	GetTicketByUserID(userID int) ([]*GetTicketByUserIdResponse, error)
+	GetTicketByUserID(userID int64) ([]*GetTicketByUserIdResponse, error)
 }

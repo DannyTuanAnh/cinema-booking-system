@@ -95,6 +95,7 @@ async function handleLogin(e) {
     const data = response.response || response;
 
     // Save auth data
+    // Note: refresh_token được backend set trong HttpOnly cookie, không lưu ở localStorage
     Storage.setAuthToken(data.access_token);
     Storage.setUserInfo(data.user_id, data.email, data.name);
 
@@ -106,8 +107,12 @@ async function handleLogin(e) {
       window.location.href = "../index.html";
     }, 1000);
   } catch (error) {
-    console.error("Login error:", error);
-    showAlert(error.message);
+    if (error.status === 401) {
+      showAlert("Thiếu Api Key");
+    }
+
+    // console.error("Login error:", error);
+    // showAlert(error.message);
 
     // Re-enable button
     loginBtn.disabled = false;

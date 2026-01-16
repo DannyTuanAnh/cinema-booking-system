@@ -22,7 +22,7 @@ func NewTicketHTTPClient(baseURL string) TicketClient {
 	}
 }
 
-func (c *ticketHTTPClient) GetTicketByUserID(userID int) ([]*GetTicketByUserIdResponse, error) {
+func (c *ticketHTTPClient) GetTicketByUserID(userID int64) ([]*GetTicketByUserIdResponse, error) {
 	httpReq, err := http.NewRequestWithContext(context.Background(), http.MethodGet, fmt.Sprintf("%s/tickets?user_id=%d", c.baseURL, userID), nil)
 	if err != nil {
 		return nil, err

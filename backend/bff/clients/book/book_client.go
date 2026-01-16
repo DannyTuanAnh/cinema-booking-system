@@ -5,7 +5,7 @@ type Seat struct {
 }
 
 type BookRequest struct {
-	UserID int   `json:"user_id"`
+	UserID int64 `json:"user_id"`
 	Seats  []int `json:"seats"`
 }
 

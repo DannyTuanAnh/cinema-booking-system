@@ -5,23 +5,33 @@
  * ============================================
  */
 
+// Storage keys (if defined globally, skip this)
+if (typeof STORAGE_KEYS === "undefined") {
+  window.STORAGE_KEYS = {
+    TOKEN: "cinema_auth_token",
+    USER_ID: "cinema_user_id",
+    USER_EMAIL: "cinema_user_email",
+    USER_NAME: "cinema_user_name",
+  };
+}
+
 const Storage = {
   /**
-   * Lưu token xác thực
+   * Lưu access token
    */
   setAuthToken(token) {
     localStorage.setItem(STORAGE_KEYS.TOKEN, token);
   },
 
   /**
-   * Lấy token xác thực
+   * Lấy access token
    */
   getAuthToken() {
     return localStorage.getItem(STORAGE_KEYS.TOKEN);
   },
 
   /**
-   * Xóa token xác thực
+   * Xóa access token
    */
   removeAuthToken() {
     localStorage.removeItem(STORAGE_KEYS.TOKEN);
@@ -69,11 +79,10 @@ const Storage = {
   clearAll() {
     this.removeAuthToken();
     this.removeUserInfo();
-  },
-
+  }
   /**
    * Lưu dữ liệu tùy chỉnh
-   */
+   */,
   set(key, value) {
     try {
       const data = typeof value === "object" ? JSON.stringify(value) : value;

@@ -25,6 +25,7 @@ func RegisterAuthRoutes(r *gin.RouterGroup, db *sql.DB) {
 
 	RegisterSignUpRoute(r, authController, db)
 	RegisterLoginRoute(r, authController, db)
+	RegisterRefreshTokenRoute(r, authController, db)
 }
 
 func RegisterLoginRoute(r *gin.RouterGroup, ac *auth.AuthController, db *sql.DB) {
@@ -33,4 +34,8 @@ func RegisterLoginRoute(r *gin.RouterGroup, ac *auth.AuthController, db *sql.DB)
 
 func RegisterSignUpRoute(r *gin.RouterGroup, ac *auth.AuthController, db *sql.DB) {
 	r.POST("/register", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), ac.Register)
+}
+
+func RegisterRefreshTokenRoute(r *gin.RouterGroup, ac *auth.AuthController, db *sql.DB) {
+	r.POST("/refresh", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), ac.RefreshToken)
 }

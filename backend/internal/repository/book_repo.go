@@ -3,11 +3,12 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"fmt"
 )
 
 type BookRepository interface {
 	BeginTransaction(ctx context.Context) (*sql.Tx, error)
-	CreateBooking(ctx context.Context, tx *sql.Tx, userID int, seats []int) error
+	CreateBooking(ctx context.Context, tx *sql.Tx, userID int64, seats []int) error
 	SetTimeoutTx(ctx context.Context, tx *sql.Tx, timeout string) error
 }
 
@@ -26,11 +27,12 @@ func (b *bookRepo) BeginTransaction(ctx context.Context) (*sql.Tx, error) {
 }
 
 func (b *bookRepo) SetTimeoutTx(ctx context.Context, tx *sql.Tx, timeout string) error {
-	_, err := tx.ExecContext(ctx, `SET LOCAL lock_timeout = $1`, timeout)
+	query := fmt.Sprintf(`SET LOCAL lock_timeout = '%s'`, timeout)
+	_, err := tx.ExecContext(ctx, query)
 	return err
 }
 
-func (b *bookRepo) CreateBooking(ctx context.Context, tx *sql.Tx, userID int, seats []int) error {
+func (b *bookRepo) CreateBooking(ctx context.Context, tx *sql.Tx, userID int64, seats []int) error {
 	for _, seatID := range seats {
 		_, err := tx.ExecContext(
 			ctx,

@@ -7,16 +7,17 @@
 
 const API_CONFIG = {
   // BFF API Base URL
-  BASE_URL: "http://192.168.1.231:8080/api",
+  BASE_URL: "https://localhost:8443/api",
 
   // API Key (generated from backend)
-  API_KEY: "web_65e7e5cb-4cef-4086-99f5-9847ac3b8bd2_dLoXLJedzE3ICDtt", // Replace with actual key
+  API_KEY: "web_40a58cd8-5182-47d1-9e69-e7f01b07bc9a_crLdf4Wm3Z5bAWeX",
 
   // API Endpoints
   ENDPOINTS: {
     // Auth
     LOGIN: "/auth/login",
     REGISTER: "/auth/register",
+    REFRESH: "/auth/refresh",
 
     // Movies
     MOVIES: "/movies",

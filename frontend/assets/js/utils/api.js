@@ -26,7 +26,7 @@ const API = {
   /**
    * Xử lý response
    */
-  async _handleResponse(response) {
+  async _handleResponse(response, retryCallback = null) {
     const contentType = response.headers.get("content-type");
     const isJSON = contentType && contentType.includes("application/json");
 
@@ -47,8 +47,25 @@ const API = {
       // Handle specific status codes
       switch (response.status) {
         case 401:
+          // Nếu có callback để retry (sau khi refresh token)
+          if (
+            retryCallback &&
+            typeof Auth !== "undefined" &&
+            typeof Auth.refreshTokenOrLogout === "function"
+          ) {
+            console.log("🔄 Received 401, attempting token refresh...");
+            const refreshed = await Auth.refreshTokenOrLogout();
+            if (refreshed) {
+              // Token đã được refresh, retry request
+              console.log("✅ Token refreshed, retrying request...");
+              return await retryCallback();
+            }
+            // Nếu refresh thất bại, Auth.refreshTokenOrLogout đã redirect về login
+            return;
+          }
+
           errorMessage = ERROR_MESSAGES.UNAUTHORIZED;
-          // Auto logout on 401
+          // Fallback: Auto logout on 401 nếu không có Auth.refreshTokenOrLogout
           Storage.clearAll();
           if (!window.location.pathname.includes("login")) {
             window.location.href = "/pages/login.html";
@@ -68,7 +85,9 @@ const API = {
           break;
       }
 
-      throw new Error(errorMessage);
+      const error = new Error(errorMessage);
+      error.status = response.status;
+      throw error;
     }
 
     if (isJSON) {
@@ -82,14 +101,23 @@ const API = {
    * GET request
    */
   async get(endpoint, includeAuth = false) {
-    try {
+    const makeRequest = async () => {
       const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
         method: "GET",
         headers: this._getHeaders(includeAuth),
+        credentials: includeAuth ? "include" : "same-origin",
         timeout: API_CONFIG.TIMEOUT,
       });
 
-      return await this._handleResponse(response);
+      // Pass retry callback cho _handleResponse
+      return await this._handleResponse(
+        response,
+        includeAuth ? makeRequest : null
+      );
+    };
+
+    try {
+      return await makeRequest();
     } catch (error) {
       if (error.name === "TypeError" || error.message === "Failed to fetch") {
         throw new Error(ERROR_MESSAGES.NETWORK_ERROR);
@@ -102,15 +130,24 @@ const API = {
    * POST request
    */
   async post(endpoint, data, includeAuth = false) {
-    try {
+    const makeRequest = async () => {
       const response = await fetch(`${API_CONFIG.BASE_URL}${endpoint}`, {
         method: "POST",
         headers: this._getHeaders(includeAuth),
         body: JSON.stringify(data),
+        credentials: includeAuth ? "include" : "same-origin",
         timeout: API_CONFIG.TIMEOUT,
       });
 
-      return await this._handleResponse(response);
+      // Pass retry callback cho _handleResponse
+      return await this._handleResponse(
+        response,
+        includeAuth ? makeRequest : null
+      );
+    };
+
+    try {
+      return await makeRequest();
     } catch (error) {
       if (error.name === "TypeError" || error.message === "Failed to fetch") {
         throw new Error(ERROR_MESSAGES.NETWORK_ERROR);

@@ -37,9 +37,11 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
-		Path:     "/auth/refresh",
+		Path:     "/",
 		MaxAge:   int(c.authService.RefreshTokenMaxAge().Seconds()),
 	})
+
+	log.Println("set refresh token cookie:", refresh)
 
 	ctx.JSON(http.StatusOK, model.LoginResponse{
 		AccessToken: access,
@@ -96,7 +98,7 @@ func (c *AuthController) Refresh(ctx *gin.Context) {
 		HttpOnly: true,
 		Secure:   true,
 		SameSite: http.SameSiteStrictMode,
-		Path:     "/auth/refresh",
+		Path:     "/",
 		MaxAge:   maxAge,
 	})
 

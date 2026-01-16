@@ -42,6 +42,9 @@ func (ac *AuthController) Login(ctx *gin.Context) {
 		http.SetCookie(ctx.Writer, cookie)
 	}
 
+	log.Println("login response:", resp)
+	log.Println("cookies:", cookies)
+
 	ctx.JSON(http.StatusOK, gin.H{"response": resp})
 
 }

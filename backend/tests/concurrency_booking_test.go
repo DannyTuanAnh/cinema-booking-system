@@ -40,7 +40,7 @@ func TestConcurrentSeatBooking(t *testing.T) {
 	bookService := book_service.NewBookService(bookRepo, seatRepo)
 
 	// seats := []int{7, 8, 9}
-	userIDs := []int{4, 5, 6}
+	userIDs := []int64{4, 5, 6}
 
 	var wg sync.WaitGroup
 	wg.Add(len(userIDs))
@@ -50,7 +50,7 @@ func TestConcurrentSeatBooking(t *testing.T) {
 	start := make(chan struct{ userId int64 })
 
 	for i, userID := range userIDs {
-		go func(idx int, uid int) {
+		go func(idx int, uid int64) {
 			defer wg.Done()
 
 			<-start

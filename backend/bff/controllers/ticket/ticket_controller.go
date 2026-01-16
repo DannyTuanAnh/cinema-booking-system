@@ -26,7 +26,7 @@ func (t *TicketController) GetTicketByUserID(ctx *gin.Context) {
 	}
 
 	// convert userId type any to int
-	userIdInt, ok := userId.(int)
+	userIdInt, ok := userId.(int64)
 	if !ok {
 		ctx.JSON(http.StatusInternalServerError, gin.H{"error": "invalid userID type"})
 		return
