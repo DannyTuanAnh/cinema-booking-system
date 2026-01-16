@@ -51,6 +51,7 @@ func main() {
 		RefreshTokenExpire: 7 * time.Duration(expireHours) * time.Hour,
 	}
 	jwtGen := jwt.NewJWTGenerator(jwtCfg)
+	jwtValid := jwt.NewValidator(jwtCfg)
 
 	userRepo := repository.NewUserRepository(database)
 	movieRepo := repository.NewMovieRepository(database)
@@ -60,7 +61,7 @@ func main() {
 	ticketRepo := repository.NewTicketRepository(database)
 	rtRepo := repository.NewRefreshTokenRepoPG(database)
 
-	authService := auth_service.NewAuthService(rtRepo, userRepo, jwtGen)
+	authService := auth_service.NewAuthService(rtRepo, userRepo, jwtGen, jwtValid)
 	movieService := movie_service.NewMovieService(movieRepo)
 	showService := show_service.NewShowService(showRepo)
 	seatService := seat_service.NewSeatService(seatRepo)

@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"log"
 	"net/http"
 	"strings"
 
@@ -44,6 +45,7 @@ func (m *JWTMiddleware) Handle() gin.HandlerFunc {
 		if err != nil {
 			switch err {
 			case jwt.ErrExpiredToken:
+				log.Println("token expired:", err)
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "token expired"})
 			case jwt.ErrInvalidIssuer:
 				c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "invalid token issuer"})

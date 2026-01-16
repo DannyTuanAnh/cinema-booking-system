@@ -9,6 +9,7 @@ import (
 
 type Validator interface {
 	ValidateAccess(ctx context.Context, tokenString string) (*AccessClaims, error)
+	ValidateRefresh(ctx context.Context, tokenString string) (*jwtlib.RegisteredClaims, error)
 }
 
 type hs256Validator struct {

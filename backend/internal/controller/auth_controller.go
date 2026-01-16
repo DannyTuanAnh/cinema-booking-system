@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"log"
 	"net/http"
 
 	"cinema.com/demo/internal/model"
@@ -70,6 +71,8 @@ func (c *AuthController) Register(ctx *gin.Context) {
 func (c *AuthController) Refresh(ctx *gin.Context) {
 	rt, err := ctx.Cookie("refresh_token")
 
+	log.Println("old refresh token cookie from client: ", rt)
+
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "missing refresh token"})
 		return
@@ -80,6 +83,9 @@ func (c *AuthController) Refresh(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "token reuse detected"})
 		return
 	}
+
+	log.Println("new access token:", access)
+	log.Println("new refresh token:", refresh)
 
 	maxAge := int(c.authService.RefreshTokenMaxAge().Seconds())
 
