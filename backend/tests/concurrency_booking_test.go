@@ -39,7 +39,7 @@ func TestConcurrentSeatBooking(t *testing.T) {
 	bookRepo := repository.NewBookRepository(db)
 	bookService := book_service.NewBookService(bookRepo, seatRepo)
 
-	seats := []int{7, 8, 9}
+	// seats := []int{7, 8, 9}
 	userIDs := []int{4, 5, 6}
 
 	var wg sync.WaitGroup
@@ -55,7 +55,7 @@ func TestConcurrentSeatBooking(t *testing.T) {
 
 			<-start
 
-			err := bookService.BookSeats(ctx, uid, seats)
+			err := bookService.BookSeats(ctx, uid, []int{7 + idx, 8 + idx, 9 + idx})
 			if err != nil {
 				results[idx] = fmt.Errorf("user %d, %w", uid, err)
 			} else {

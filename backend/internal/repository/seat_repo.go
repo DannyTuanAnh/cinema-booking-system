@@ -13,6 +13,8 @@ import (
 type SeatRepository interface {
 	GetSeatByShowID(ctx context.Context, show_id int) ([]model.Seat, error)
 	BookSeats(ctx context.Context, tx *sql.Tx, seats []int) error
+	LockSeats(ctx context.Context, tx *sql.Tx, seats []int) error
+	CountSeatsForUpdate(ctx context.Context, tx *sql.Tx, seats []int) (int, error)
 }
 
 type seatRepo struct {
@@ -55,30 +57,61 @@ func (s *seatRepo) GetSeatByShowID(ctx context.Context, show_id int) ([]model.Se
 
 func (s *seatRepo) BookSeats(ctx context.Context, tx *sql.Tx, seats []int) error {
 
-	res, err := tx.ExecContext(
+	_, err := tx.ExecContext(
 		ctx,
 		`
             UPDATE seats
             SET status = $1
-            WHERE seat_id = ANY($2)
-              AND status = $3
-            `,
+            WHERE seat_id = ANY($2);
+        `,
 		model.SeatStatusBooked,
 		pq.Array(seats),
-		model.SeatStatusAvailable,
 	)
 	if err != nil {
 		return fmt.Errorf("failed to update seats: %w", err)
 	}
 
-	affected, err := res.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("failed to get rows affected: %w", err)
-	}
+	return nil
+}
 
-	if int(affected) != len(seats) {
-		return fmt.Errorf("one or more seats already booked")
+func (s *seatRepo) LockSeats(ctx context.Context, tx *sql.Tx, seats []int) error {
+
+	_, err := tx.ExecContext(
+		ctx,
+		`
+			select seat_id
+			from seats
+			where seat_id = any($1)
+			for update;
+		`,
+		pq.Array(seats),
+	)
+
+	if err != nil {
+		return fmt.Errorf("failed to lock seats: %w", err)
 	}
 
 	return nil
+}
+
+func (s *seatRepo) CountSeatsForUpdate(ctx context.Context, tx *sql.Tx, seats []int) (int, error) {
+
+	var count int
+
+	err := tx.QueryRowContext(
+		ctx,
+		`
+			select count(*) as cnt
+			from seats
+			where seat_id = any($1) and status = $2;
+		`,
+		pq.Array(seats),
+		model.SeatStatusAvailable,
+	).Scan(&count)
+
+	if err != nil {
+		return 0, fmt.Errorf("failed to count seats: %w", err)
+	}
+
+	return count, nil
 }

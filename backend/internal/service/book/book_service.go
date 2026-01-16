@@ -2,9 +2,11 @@ package book_service
 
 import (
 	"context"
+	"fmt"
+
+	"log"
 
 	"cinema.com/demo/internal/repository"
-	"log"
 )
 
 type BookService struct {
@@ -28,6 +30,30 @@ func (s *BookService) BookSeats(ctx context.Context, userID int, seats []int) er
 	}
 
 	defer tx.Rollback()
+
+	// set lock timeout
+	err = s.bookRepo.SetTimeoutTx(ctx, tx, "3s")
+	if err != nil {
+		return err
+	}
+
+	// lock the seats
+	err = s.seatRepo.LockSeats(ctx, tx, seats)
+	if err != nil {
+		return err
+	}
+
+	// check if all seats are still available
+	count, err := s.seatRepo.CountSeatsForUpdate(ctx, tx, seats)
+	if err != nil {
+		return err
+	}
+
+	if count != len(seats) {
+		return fmt.Errorf("one or more seats are already booked")
+	}
+
+	// book the seats
 
 	err = s.seatRepo.BookSeats(ctx, tx, seats)
 	if err != nil {
