@@ -1,14 +1,17 @@
 import { BrowserRouter } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
+import { SessionProvider } from "./context/SessionContext";
 import AppRoutes from "./routes/AppRoutes";
 import "./styles/App.css";
 
 function App() {
   return (
     <BrowserRouter>
-      <AuthProvider>
-        <AppRoutes />
-      </AuthProvider>
+      <SessionProvider>
+        <AuthProvider>
+          <AppRoutes />
+        </AuthProvider>
+      </SessionProvider>
     </BrowserRouter>
   );
 }

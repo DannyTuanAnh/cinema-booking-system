@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"database/sql"
-	"errors"
 
 	"cinema.com/demo/internal/model"
 )
@@ -50,8 +49,5 @@ func (t *ticketRepo) GetTicketByUserID(ctx context.Context, user_id int) ([]mode
 		return nil, err
 	}
 
-	if len(tickets) == 0 {
-		return nil, errors.New("no tickets found for the given user ID")
-	}
 	return tickets, nil
 }

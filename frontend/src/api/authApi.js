@@ -9,10 +9,10 @@ const authApi = {
     });
   },
 
-  register: (name, email, password) => {
+  register: (full_name, email, password) => {
     // Đăng ký tài khoản mới
     return axiosClient.post("/auth/register", {
-      name,
+      full_name,
       email,
       password,
     });

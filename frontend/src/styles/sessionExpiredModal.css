@@ -1,0 +1,144 @@
+/* Session Expired Modal Styles */
+.session-expired-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10000;
+  animation: fadeIn 0.3s ease-out;
+  backdrop-filter: blur(4px);
+}
+
+.session-expired-modal {
+  background: #1a1a1a;
+  border-radius: 16px;
+  padding: 40px;
+  max-width: 450px;
+  width: 90%;
+  text-align: center;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(30px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.session-expired-icon {
+  width: 80px;
+  height: 80px;
+  margin: 0 auto 24px;
+  background: linear-gradient(135deg, #e50914 0%, #ff3a3a 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(229, 9, 20, 0.7);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 0 0 10px rgba(229, 9, 20, 0);
+  }
+}
+
+.session-expired-title {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  margin: 0 0 16px 0;
+  line-height: 1.3;
+}
+
+.session-expired-message {
+  font-size: 16px;
+  color: #999;
+  margin: 0 0 32px 0;
+  line-height: 1.6;
+}
+
+.session-expired-footer {
+  margin-bottom: 20px;
+}
+
+.session-expired-footer .btn {
+  min-width: 200px;
+  padding: 14px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  border-radius: 8px;
+  transition: all 0.3s;
+}
+
+.session-expired-footer .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(229, 9, 20, 0.4);
+}
+
+.session-expired-timer {
+  font-size: 13px;
+  color: #666;
+  margin-top: 16px;
+  font-style: italic;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  .session-expired-modal {
+    padding: 32px 24px;
+    max-width: 90%;
+  }
+
+  .session-expired-icon {
+    width: 64px;
+    height: 64px;
+  }
+
+  .session-expired-icon svg {
+    width: 48px;
+    height: 48px;
+  }
+
+  .session-expired-title {
+    font-size: 24px;
+  }
+
+  .session-expired-message {
+    font-size: 14px;
+  }
+
+  .session-expired-footer .btn {
+    min-width: 160px;
+    padding: 12px 24px;
+    font-size: 14px;
+  }
+}

@@ -6,7 +6,7 @@ import Toast from "../components/Toast";
 import "../styles/authPage.css";
 
 const RegisterPage = () => {
-  const [name, setName] = useState("");
+  const [full_name, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -21,7 +21,7 @@ const RegisterPage = () => {
     setToast(null);
 
     // Validation
-    if (!name || !email || !password || !confirmPassword) {
+    if (!full_name || !email || !password || !confirmPassword) {
       setToast({ message: "Vui lòng nhập đầy đủ thông tin", type: "error" });
       return;
     }
@@ -41,7 +41,7 @@ const RegisterPage = () => {
     setLoading(true);
 
     try {
-      const result = await register(name, email, password);
+      const result = await register(full_name, email, password);
 
       if (result.success) {
         setToast({
@@ -86,8 +86,8 @@ const RegisterPage = () => {
               id="name"
               className="form-input"
               placeholder="Nguyễn Văn A"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              value={full_name}
+              onChange={(e) => setFullName(e.target.value)}
               disabled={loading}
             />
           </div>

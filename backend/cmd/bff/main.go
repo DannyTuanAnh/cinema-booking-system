@@ -82,10 +82,6 @@ func main() {
 	// Enable CORS for all routes
 	r.Use(middleware.CORSMiddleware())
 
-	// // Serve frontend static files
-	// r.Static("/public", "../../../frontend")
-	// r.StaticFile("", "../../../frontend/index.html")
-
 	api := r.Group("/api")
 
 	// public

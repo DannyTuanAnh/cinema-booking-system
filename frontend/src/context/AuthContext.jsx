@@ -29,11 +29,11 @@ export const AuthProvider = ({ children }) => {
     try {
       const data = await authApi.login({ email, password });
 
-      // Backend trả về: {response: {token, user_id, email, name}}
+      // Backend trả về: {response: {access_token, user_id, email, name}}
       const responseData = data.response || data;
 
       // Save to localStorage
-      localStorage.setItem("token", responseData.token);
+      localStorage.setItem("token", responseData.access_token);
       localStorage.setItem("userID", responseData.user_id);
       localStorage.setItem("email", responseData.email);
       localStorage.setItem(
@@ -46,9 +46,10 @@ export const AuthProvider = ({ children }) => {
         }),
       );
 
+      localStorage.getItem("user");
+
       // Update state
       setUser({
-        user_id: responseData.user_id,
         userID: responseData.user_id,
         email: responseData.email,
         name: responseData.name,
@@ -65,9 +66,9 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const register = async (name, email, password) => {
+  const register = async (full_name, email, password) => {
     try {
-      await authApi.register(name, email, password);
+      await authApi.register(full_name, email, password);
       return { success: true };
     } catch (error) {
       console.error("Register error:", error);
