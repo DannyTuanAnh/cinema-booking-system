@@ -60,7 +60,6 @@ func main() {
 	movieRepo := repository.NewMovieRepository(database)
 	showRepo := repository.NewShowRepository(database)
 	seatRepo := repository.NewSeatRepository(database)
-	bookRepo := repository.NewBookRepository(database)
 	ticketRepo := repository.NewTicketRepository(database)
 	rtRepo := repository.NewRefreshTokenRepoPG(database)
 
@@ -68,7 +67,7 @@ func main() {
 	movieService := movie_service.NewMovieService(movieRepo)
 	showService := show_service.NewShowService(showRepo)
 	seatService := seat_service.NewSeatService(seatRepo)
-	bookService := book_service.NewBookService(bookRepo, seatRepo)
+	bookService := book_service.NewBookService(seatRepo)
 	ticketService := ticket_service.NewTicketService(ticketRepo)
 
 	authController := controller.NewAuthController(authService)

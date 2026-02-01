@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -36,8 +37,7 @@ func TestConcurrentSeatBooking(t *testing.T) {
 	ctx := context.Background()
 
 	seatRepo := repository.NewSeatRepository(db)
-	bookRepo := repository.NewBookRepository(db)
-	bookService := book_service.NewBookService(bookRepo, seatRepo)
+	bookService := book_service.NewBookService(seatRepo)
 
 	// seats := []int{7, 8, 9}
 	userIDs := []int64{4, 5, 6}
@@ -87,4 +87,52 @@ func TestConcurrentSeatBooking(t *testing.T) {
 	}
 
 	log.Println("✅ concurrency control works correctly")
+}
+
+// Hàm để test đồng thời đặt chỗ ngồi, kiểm tra hiệu quả của hàm trong DB
+func TestConcurrentBooking(t *testing.T) {
+	dsn := "postgres://postgres:1@localhost:5432/cinema?sslmode=disable"
+	db, _ := sql.Open("postgres", dsn)
+	defer db.Close()
+
+	seatIDs := "{6,7,8}"
+	userCount := 6
+
+	var success int32
+	var fail int32
+
+	wg := sync.WaitGroup{}
+	wg.Add(userCount)
+
+	for i := 1; i <= userCount; i++ {
+		go func(userID int) {
+			defer wg.Done()
+
+			tx, err := db.Begin()
+			if err != nil {
+				atomic.AddInt32(&fail, 1)
+				return
+			}
+
+			_, err = tx.Exec(
+				"SELECT book_seats($1, $2)",
+				userID,
+				seatIDs,
+			)
+
+			if err != nil {
+				tx.Rollback()
+				atomic.AddInt32(&fail, 1)
+				return
+			}
+
+			tx.Commit()
+			atomic.AddInt32(&success, 1)
+		}(i)
+	}
+
+	wg.Wait()
+
+	fmt.Println("Success:", success)
+	fmt.Println("Fail:", fail)
 }
