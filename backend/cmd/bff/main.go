@@ -82,9 +82,9 @@ func main() {
 	// Enable CORS for all routes
 	r.Use(middleware.CORSMiddleware())
 
-	// Serve frontend static files
-	r.Static("/public", "../../../frontend")
-	r.StaticFile("", "../../../frontend/index.html")
+	// // Serve frontend static files
+	// r.Static("/public", "../../../frontend")
+	// r.StaticFile("", "../../../frontend/index.html")
 
 	api := r.Group("/api")
 
@@ -104,7 +104,11 @@ func main() {
 
 	addr := os.Getenv("ADDR_BFF_SERVER")
 
-	err = r.RunTLS(addr, "../../certs/localhost+2.pem", "../../certs/localhost+2-key.pem")
+	if ENV := os.Getenv("ENV"); ENV == "development" {
+		err = r.RunTLS(addr, "../../certs/localhost+2.pem", "../../certs/localhost+2-key.pem")
+	} else {
+		err = r.Run(addr)
+	}
 
 	if err != nil {
 		log.Fatalf("Failed to run server: %v", err)

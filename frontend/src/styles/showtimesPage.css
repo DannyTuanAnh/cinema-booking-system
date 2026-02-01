@@ -1,0 +1,96 @@
+.showtimes-page {
+  width: 100%;
+}
+
+.movie-header {
+  display: flex;
+  gap: 30px;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  padding: 30px;
+  background-color: var(--bg-gray);
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+}
+
+.movie-poster-small {
+  width: 150px;
+  height: 225px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.movie-details h1 {
+  font-size: 36px;
+  margin-bottom: 16px;
+}
+
+.movie-meta {
+  display: flex;
+  gap: 20px;
+  color: var(--text-secondary);
+}
+
+.showtimes-list {
+  margin-top: 30px;
+}
+
+.showtime-group {
+  margin-bottom: 40px;
+}
+
+.showtime-date {
+  font-size: 24px;
+  margin-bottom: 20px;
+  color: var(--primary-color);
+}
+
+.showtime-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.showtime-btn {
+  padding: 16px 32px;
+  background-color: var(--bg-gray);
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  color: var(--text-primary);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.showtime-btn:hover {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+  .movie-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .movie-details h1 {
+    font-size: 28px;
+  }
+
+  .movie-meta {
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .showtime-buttons {
+    justify-content: center;
+  }
+
+  .showtime-btn {
+    padding: 12px 24px;
+    font-size: 16px;
+  }
+}

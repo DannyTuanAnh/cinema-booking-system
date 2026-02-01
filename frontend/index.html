@@ -1,95 +1,19 @@
-<!DOCTYPE html>
-<html lang="vi">
+<!doctype html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Cinema Booking System - Trang chủ</title>
-    <link rel="stylesheet" href="assets/css/common.css" />
-    <link rel="stylesheet" href="assets/css/home.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=Dancing+Script:wght@400;700&family=Roboto+Condensed:wght@300;400;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <title>CineBook - Movie Booking</title>
   </head>
   <body>
-    <!-- Header -->
-    <header class="header">
-      <div class="container">
-        <div class="header-content">
-          <div class="logo">
-            <h1>🎬 Cinema Booking</h1>
-          </div>
-          <nav class="nav">
-            <a href="index.html" class="nav-link active">Trang chủ</a>
-            <a href="pages/movies.html" class="nav-link">Phim</a>
-            <a href="pages/my-tickets.html" class="nav-link">Vé của tôi</a>
-          </nav>
-          <div class="user-actions">
-            <div id="userInfo" class="user-info hidden">
-              <span class="user-name"></span>
-              <button class="btn btn-secondary" onclick="logout()">
-                Đăng xuất
-              </button>
-            </div>
-            <div id="authButtons" class="auth-buttons">
-              <a href="pages/login.html" class="btn btn-secondary">Đăng nhập</a>
-              <a href="pages/register.html" class="btn btn-primary">Đăng ký</a>
-            </div>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- Hero Section -->
-    <section class="hero">
-      <div class="container">
-        <div class="hero-content">
-          <h2 class="hero-title">Chào mừng đến với Cinema Booking</h2>
-          <p class="hero-subtitle">
-            Đặt vé xem phim nhanh chóng, dễ dàng và an toàn
-          </p>
-          <a href="pages/movies.html" class="btn btn-primary btn-large"
-            >Xem phim ngay</a
-          >
-        </div>
-      </div>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-      <div class="container">
-        <h2 class="section-title">Tính năng nổi bật</h2>
-        <div class="features-grid">
-          <div class="feature-card">
-            <div class="feature-icon">🎟️</div>
-            <h3>Đặt vé online</h3>
-            <p>Đặt vé nhanh chóng mọi lúc mọi nơi</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">💺</div>
-            <h3>Chọn ghế dễ dàng</h3>
-            <p>Giao diện trực quan, chọn ghế như ý</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">🔒</div>
-            <h3>An toàn & Bảo mật</h3>
-            <p>Hệ thống bảo mật nhiều lớp</p>
-          </div>
-          <div class="feature-card">
-            <div class="feature-icon">⚡</div>
-            <h3>Xử lý đồng thời</h3>
-            <p>Không lo mất ghế khi đông người</p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <div class="container">
-        <p>&copy; 2026 Cinema Booking System. Dự án giáo dục - DBMS Course</p>
-      </div>
-    </footer>
-
-    <script src="assets/js/config.js"></script>
-    <script src="assets/js/utils/storage.js"></script>
-    <script src="assets/js/utils/auth.js"></script>
-    <script src="assets/js/components/header.js"></script>
+    <div id="root"></div>
+    <script type="module" src="./src/Main.jsx"></script>
   </body>
 </html>

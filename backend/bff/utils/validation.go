@@ -69,11 +69,11 @@ func HandleValidationErrors(err error) gin.H {
 			case "search":
 				errors[fieldPath] = fmt.Sprintf("%s chỉ được chứa các chữ cái, số và khoảng trắng", fieldPath)
 			case "email":
-				errors[fieldPath] = fmt.Sprintf("%s phải đúng định dạng là email", fieldPath)
+				errors[fieldPath] = fmt.Sprintf("%s phải đúng định dạng email", fieldPath)
 			case "datetime":
 				errors[fieldPath] = fmt.Sprintf("%s phải đúng định dạng YYYY-MM-DD", fieldPath)
 			case "strong_password":
-				errors[fieldPath] = fmt.Sprintf("%s phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt", fieldPath)
+				errors[fieldPath] = fmt.Sprintf("%s phải có ít nhất 8 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt (@$!%*?&)", fieldPath)
 			}
 		}
 
