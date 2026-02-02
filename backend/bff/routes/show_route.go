@@ -1,21 +1,19 @@
 package routes
 
 import (
-	"database/sql"
 	"os"
 
 	"cinema.com/demo/bff/clients/show"
 	"cinema.com/demo/bff/controllers/show"
-	"cinema.com/demo/bff/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func InitShowRoutes(r *gin.RouterGroup, db *sql.DB) {
+func InitShowRoutes(r *gin.RouterGroup) {
 	showGroup := r.Group("/shows")
-	RegisterShowRoutes(showGroup, db)
+	RegisterShowRoutes(showGroup)
 }
 
-func RegisterShowRoutes(r *gin.RouterGroup, db *sql.DB) {
+func RegisterShowRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
 	path := "https://" + addr + "/api"
 
@@ -23,9 +21,9 @@ func RegisterShowRoutes(r *gin.RouterGroup, db *sql.DB) {
 
 	showController := show.NewShowController(showClient)
 
-	RegisterGetShowRoute(r, showController, db)
+	RegisterGetShowRoute(r, showController)
 }
 
-func RegisterGetShowRoute(r *gin.RouterGroup, s *show.ShowController, db *sql.DB) {
-	r.GET("", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), s.GetShowByMovieID)
+func RegisterGetShowRoute(r *gin.RouterGroup, s *show.ShowController) {
+	r.GET("", s.GetShowByMovieID)
 }

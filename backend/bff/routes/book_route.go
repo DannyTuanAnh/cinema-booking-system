@@ -1,21 +1,19 @@
 package routes
 
 import (
-	"database/sql"
 	"os"
 
 	"cinema.com/demo/bff/clients/book"
 	"cinema.com/demo/bff/controllers/book"
-	"cinema.com/demo/bff/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func InitBookRoutes(r *gin.RouterGroup, db *sql.DB) {
+func InitBookRoutes(r *gin.RouterGroup) {
 	bookGroup := r.Group("/book")
-	RegisterBookRoutes(bookGroup, db)
+	RegisterBookRoutes(bookGroup)
 }
 
-func RegisterBookRoutes(r *gin.RouterGroup, db *sql.DB) {
+func RegisterBookRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
 	path := "https://" + addr + "/api"
 
@@ -23,9 +21,9 @@ func RegisterBookRoutes(r *gin.RouterGroup, db *sql.DB) {
 
 	bookController := book.NewBookController(bookClient)
 
-	RegisterBookRoute(r, bookController, db)
+	RegisterBookRoute(r, bookController)
 }
 
-func RegisterBookRoute(r *gin.RouterGroup, b *book.BookController, db *sql.DB) {
-	r.POST("", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), b.Book)
+func RegisterBookRoute(r *gin.RouterGroup, b *book.BookController) {
+	r.POST("", b.Book)
 }

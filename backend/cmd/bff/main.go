@@ -83,19 +83,22 @@ func main() {
 	r.Use(middleware.CORSMiddleware())
 
 	api := r.Group("/api")
-
-	// public
-	routes.InitAuthRoutes(api, database)
-	routes.InitMovieRoutes(api, database)
-	routes.InitShowRoutes(api, database)
-	routes.InitSeatRoutes(api, database)
-
-	// protected
-	protected := api.Group("")
-	protected.Use(jwtMiddleware.Handle())
+	api.Use(middleware.RateLimitRedis(), middleware.ApiKeyMiddleware(database))
 	{
-		routes.InitBookRoutes(protected, database)
-		routes.InitTicketRoutes(protected, database)
+
+		// public
+		routes.InitAuthRoutes(api)
+		routes.InitMovieRoutes(api)
+		routes.InitShowRoutes(api)
+		routes.InitSeatRoutes(api)
+
+		// protected
+		protected := api.Group("")
+		protected.Use(jwtMiddleware.Handle())
+		{
+			routes.InitBookRoutes(protected)
+			routes.InitTicketRoutes(protected)
+		}
 	}
 
 	addr := os.Getenv("ADDR_BFF_SERVER")

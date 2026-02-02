@@ -1,21 +1,19 @@
 package routes
 
 import (
-	"database/sql"
 	"os"
 
 	"cinema.com/demo/bff/clients/ticket"
 	"cinema.com/demo/bff/controllers/ticket"
-	"cinema.com/demo/bff/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func InitTicketRoutes(r *gin.RouterGroup, db *sql.DB) {
+func InitTicketRoutes(r *gin.RouterGroup) {
 	ticketGroup := r.Group("/tickets")
-	RegisterTicketRoutes(ticketGroup, db)
+	RegisterTicketRoutes(ticketGroup)
 }
 
-func RegisterTicketRoutes(r *gin.RouterGroup, db *sql.DB) {
+func RegisterTicketRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
 	path := "https://" + addr + "/api"
 
@@ -23,9 +21,9 @@ func RegisterTicketRoutes(r *gin.RouterGroup, db *sql.DB) {
 
 	ticketController := ticket.NewTicketController(ticketClient)
 
-	RegisterGetTicketRoute(r, ticketController, db)
+	RegisterGetTicketRoute(r, ticketController)
 }
 
-func RegisterGetTicketRoute(r *gin.RouterGroup, t *ticket.TicketController, db *sql.DB) {
-	r.GET("", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), t.GetTicketByUserID)
+func RegisterGetTicketRoute(r *gin.RouterGroup, t *ticket.TicketController) {
+	r.GET("", t.GetTicketByUserID)
 }

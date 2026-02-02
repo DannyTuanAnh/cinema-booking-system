@@ -1,21 +1,19 @@
 package routes
 
 import (
-	"database/sql"
 	"os"
 
 	"cinema.com/demo/bff/clients/auth"
 	"cinema.com/demo/bff/controllers/auth"
-	"cinema.com/demo/bff/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func InitAuthRoutes(r *gin.RouterGroup, db *sql.DB) {
+func InitAuthRoutes(r *gin.RouterGroup) {
 	authGroup := r.Group("/auth")
-	RegisterAuthRoutes(authGroup, db)
+	RegisterAuthRoutes(authGroup)
 }
 
-func RegisterAuthRoutes(r *gin.RouterGroup, db *sql.DB) {
+func RegisterAuthRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
 	path := "https://" + addr + "/api"
 
@@ -23,19 +21,19 @@ func RegisterAuthRoutes(r *gin.RouterGroup, db *sql.DB) {
 
 	authController := auth.NewAuthController(authClient)
 
-	RegisterSignUpRoute(r, authController, db)
-	RegisterLoginRoute(r, authController, db)
-	RegisterRefreshTokenRoute(r, authController, db)
+	RegisterSignUpRoute(r, authController)
+	RegisterLoginRoute(r, authController)
+	RegisterRefreshTokenRoute(r, authController)
 }
 
-func RegisterLoginRoute(r *gin.RouterGroup, ac *auth.AuthController, db *sql.DB) {
-	r.POST("/login", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), ac.Login)
+func RegisterLoginRoute(r *gin.RouterGroup, ac *auth.AuthController) {
+	r.POST("/login", ac.Login)
 }
 
-func RegisterSignUpRoute(r *gin.RouterGroup, ac *auth.AuthController, db *sql.DB) {
-	r.POST("/register", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), ac.Register)
+func RegisterSignUpRoute(r *gin.RouterGroup, ac *auth.AuthController) {
+	r.POST("/register", ac.Register)
 }
 
-func RegisterRefreshTokenRoute(r *gin.RouterGroup, ac *auth.AuthController, db *sql.DB) {
-	r.POST("/refresh", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), ac.RefreshToken)
+func RegisterRefreshTokenRoute(r *gin.RouterGroup, ac *auth.AuthController) {
+	r.POST("/refresh", ac.RefreshToken)
 }

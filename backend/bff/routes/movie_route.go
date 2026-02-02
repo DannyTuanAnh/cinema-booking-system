@@ -1,31 +1,29 @@
 package routes
 
 import (
-	"database/sql"
 	"os"
 
 	"cinema.com/demo/bff/clients/movie"
 	"cinema.com/demo/bff/controllers/movie"
-	"cinema.com/demo/bff/middleware"
 	"github.com/gin-gonic/gin"
 )
 
-func InitMovieRoutes(r *gin.RouterGroup, db *sql.DB) {
+func InitMovieRoutes(r *gin.RouterGroup) {
 	movieGroup := r.Group("/movies")
-	RegisterMovieRoutes(movieGroup, db)
+	RegisterMovieRoutes(movieGroup)
 }
 
-func RegisterMovieRoutes(r *gin.RouterGroup, db *sql.DB) {
+func RegisterMovieRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
-	path := "https://" + addr + "/api"
+	path := "http://" + addr + "/api"
 
 	movieClient := movie_clients.NewMovieHTTPClient(path)
 
 	movieController := movie.NewMovieController(movieClient)
 
-	RegisterGetMovieRoute(r, movieController, db)
+	RegisterGetMovieRoute(r, movieController)
 }
 
-func RegisterGetMovieRoute(r *gin.RouterGroup, m *movie.MovieController, db *sql.DB) {
-	r.GET("", middleware.ApiKeyMiddleware(db), middleware.RateLimit(), m.GetMovie)
+func RegisterGetMovieRoute(r *gin.RouterGroup, m *movie.MovieController) {
+	r.GET("", m.GetMovie)
 }
