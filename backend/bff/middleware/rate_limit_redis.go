@@ -28,17 +28,6 @@ var (
 	`)
 )
 
-func getClientIP(ctx *gin.Context) string {
-	ip := ctx.ClientIP()
-
-	// lấy IP đã được mã hóa thông qua proxy (nếu có)
-	if ip == "" {
-		ip = ctx.Request.RemoteAddr
-	}
-
-	return ip
-}
-
 // sử dụng ApacheBench của Golang để test rate limiting
 // ab -n 110 -c 1 -H "X-API-KEY: web_40a58cd8-5182-47d1-9e69-e7f01b07bc9a_crLdf4Wm3Z5bAWeX" localhost:8080/api/movies
 // Hàm giới hạn số lượng request từ một thiết bị client trong một khoảng thời gian nhất định
@@ -59,10 +48,26 @@ func RateLimitRedis() gin.HandlerFunc {
 		}
 
 		if allowed == 0 {
-			ctx.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{"error": "Too Many Requests"})
+			ctx.AbortWithStatusJSON(http.StatusTooManyRequests, gin.H{
+				"error":   "Too Many Requests",
+				"message": "Bạn đã gửi quá nhiều yêu cầu. Vui lòng thử lại sau.",
+			})
 			return
 		}
 
 		ctx.Next()
 	}
+}
+
+// Kiểm tra nếu redis đang chạy thì sử dụng rate limit redis còn nếu không có thì dùng rate limit normal
+func RateLimitingMiddleware() gin.HandlerFunc {
+
+	// kiểm tra nếu redis đang chạy thì sử dụng rate limit redis còn nếu không có thì dùng rate limit normal
+
+	if os.Getenv("REDIS") != "" {
+		return RateLimitRedis()
+	} else {
+		return RateLimitNormal()
+	}
+
 }
