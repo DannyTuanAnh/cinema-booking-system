@@ -3,7 +3,6 @@ package middleware
 import (
 	"net/http"
 	"os"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
@@ -15,12 +14,12 @@ var (
 	})
 
 	rateLimitScript = redis.NewScript(`
-	local current = redis.call("INCR", KEYS[1])
-
-	if current == 1 then
-		redis.call("EXPIRE", KEYS[1], ARGV[1])
+	if redis.call("EXISTS", KEYS[1]) == 0 then
+		redis.call("SET", KEYS[1], 1, "EX", ARGV[1])
+		return 1
 	end
-
+	
+	local current = redis.call("INCR", KEYS[1])
 	if current > tonumber(ARGV[2]) then
 		return 0
 	end
@@ -52,7 +51,7 @@ func RateLimitRedis() gin.HandlerFunc {
 
 		c := ctx.Request.Context()
 
-		allowed, err := rateLimitScript.Run(c, rds, key, int(1*time.Minute.Seconds()), 100).Int()
+		allowed, err := rateLimitScript.Run(c, rds, key, 60, 100).Int()
 
 		if err != nil {
 			ctx.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
