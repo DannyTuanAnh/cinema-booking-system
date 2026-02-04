@@ -9,49 +9,42 @@ import (
 )
 
 var (
-	clients       = make(map[string]*NormalRateLimiter)
-	clientsMu     sync.Mutex
-	cleanupOnce   sync.Once
-	cleanupActive bool
+	clients     = make(map[string]*NormalRateLimiter)
+	clientsMu   sync.Mutex
+	cleanupOnce sync.Once
 )
 
-func cleanupClients() {
+func cleanupClients(ctx context.Context) {
+	ticker := time.NewTicker(time.Minute)
+	defer ticker.Stop()
+
 	for {
-		time.Sleep(time.Minute)
-
-		clientsMu.Lock()
-
-		for ip, client := range clients {
-			if time.Since(client.lastSeen) > 3*time.Minute {
-				delete(clients, ip)
+		select {
+		case <-ticker.C:
+			clientsMu.Lock()
+			for ip, client := range clients {
+				if time.Since(client.lastSeen) > 3*time.Minute {
+					delete(clients, ip)
+				}
 			}
-		}
+			clientsMu.Unlock()
 
-		clientsMu.Unlock()
+		case <-ctx.Done():
+			return
+		}
 	}
 }
 
-func startCleanupWorker() {
+func startCleanupWorker(ctx context.Context) {
 	cleanupOnce.Do(func() {
-		if !cleanupActive {
-			cleanupActive = true
-			go cleanupClients()
-		}
+
+		go cleanupClients(ctx)
+
 	})
 }
 
-type NormalRateLimiter struct {
-	limiter  *rate.Limiter
-	lastSeen time.Time
-	mu       sync.Mutex
-}
-
-func NewNormalRateLimiter() *NormalRateLimiter {
-	return &NormalRateLimiter{}
-}
-
 // Lấy RateLimiter cho một IP cụ thể, nếu không tồn tại thì tạo mới
-func (n *NormalRateLimiter) GetRateLimiter(ip string) *rate.Limiter {
+func getRateLimiter(ip string) *rate.Limiter {
 	clientsMu.Lock()
 
 	client, exists := clients[ip]
@@ -78,9 +71,19 @@ func (n *NormalRateLimiter) GetRateLimiter(ip string) *rate.Limiter {
 	return client.limiter
 }
 
+type NormalRateLimiter struct {
+	limiter  *rate.Limiter
+	lastSeen time.Time
+	mu       sync.Mutex
+}
+
+func NewNormalRateLimiter() *NormalRateLimiter {
+	return &NormalRateLimiter{}
+}
+
 // sử dụng ApacheBench của Golang để test rate limiting
 // ab -n 105 -c 1 -H "X-API-KEY: web_40a58cd8-5182-47d1-9e69-e7f01b07bc9a_crLdf4Wm3Z5bAWeX" localhost:8080/api/movies
-func (n *NormalRateLimiter) Allow(_ context.Context, ip string) bool {
-	startCleanupWorker()
-	return n.GetRateLimiter(ip).Allow()
+func (n *NormalRateLimiter) Allow(ctx context.Context, ip string) bool {
+	startCleanupWorker(ctx)
+	return getRateLimiter(ip).Allow()
 }
