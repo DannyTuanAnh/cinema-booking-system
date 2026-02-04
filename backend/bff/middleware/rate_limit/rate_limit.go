@@ -2,8 +2,8 @@ package MiddlewareRateLimit
 
 import (
 	"context"
-	"log"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,7 +25,7 @@ func getClientIP(ctx *gin.Context) string {
 
 func GetRateLimitKey(c *gin.Context) string {
 	if uid, exists := c.Get("user_id"); exists {
-		return "rate:user:" + uid.(string)
+		return "rate:user:" + strconv.FormatInt(uid.(int64), 10)
 	}
 
 	return "rate:ip:" + getClientIP(c)
@@ -34,7 +34,6 @@ func GetRateLimitKey(c *gin.Context) string {
 func RateLimitMiddleware(redisRateLimiter RateLimiter, normalRateLimiter RateLimiter, redisHealth *RedisHealth) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		key := GetRateLimitKey(c)
-		log.Println("Rate limit key:", key)
 
 		ctx := c.Request.Context()
 

@@ -1,7 +1,6 @@
 package controller
 
 import (
-	"log"
 	"net/http"
 
 	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
@@ -41,8 +40,6 @@ func (c *AuthController) Login(ctx *gin.Context) {
 		MaxAge:   int(c.authService.RefreshTokenMaxAge().Seconds()),
 	})
 
-	log.Println("set refresh token cookie:", refresh)
-
 	ctx.JSON(http.StatusOK, model.LoginResponse{
 		AccessToken: access,
 		UserID:      userID,
@@ -73,8 +70,6 @@ func (c *AuthController) Register(ctx *gin.Context) {
 func (c *AuthController) Refresh(ctx *gin.Context) {
 	rt, err := ctx.Cookie("refresh_token")
 
-	log.Println("old refresh token cookie from client: ", rt)
-
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "missing refresh token"})
 		return
@@ -85,9 +80,6 @@ func (c *AuthController) Refresh(ctx *gin.Context) {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "token reuse detected"})
 		return
 	}
-
-	log.Println("new access token:", access)
-	log.Println("new refresh token:", refresh)
 
 	maxAge := int(c.authService.RefreshTokenMaxAge().Seconds())
 

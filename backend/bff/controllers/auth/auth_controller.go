@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"log"
 	"net/http"
 
 	auth_clients "github.com/DannyTuanAnh/cinema-booking-system/bff/clients/auth"
@@ -42,9 +41,6 @@ func (ac *AuthController) Login(ctx *gin.Context) {
 		http.SetCookie(ctx.Writer, cookie)
 	}
 
-	log.Println("login response:", resp)
-	log.Println("cookies:", cookies)
-
 	ctx.JSON(http.StatusOK, gin.H{"response": resp})
 
 }
@@ -71,8 +67,6 @@ func (ac *AuthController) Register(ctx *gin.Context) {
 func (ac *AuthController) RefreshToken(ctx *gin.Context) {
 	cookie, err := ctx.Request.Cookie("refresh_token")
 
-	log.Println("old refresh token cookie:", cookie)
-
 	if err != nil {
 		ctx.JSON(http.StatusUnauthorized, gin.H{"error": "refresh token not found"})
 		return
@@ -88,9 +82,6 @@ func (ac *AuthController) RefreshToken(ctx *gin.Context) {
 	for _, cookie := range cookies {
 		http.SetCookie(ctx.Writer, cookie)
 	}
-
-	log.Println("refresh token response:", resp)
-	log.Println("cookies:", cookies)
 
 	ctx.JSON(http.StatusOK, gin.H{"response": resp})
 

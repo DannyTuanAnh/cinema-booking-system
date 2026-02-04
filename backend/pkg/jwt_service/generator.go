@@ -2,7 +2,6 @@ package jwt
 
 import (
 	"context"
-	"log"
 	"strconv"
 	"time"
 
@@ -39,11 +38,7 @@ func (j *jwtHS256) GenerateAccessToken(ctx context.Context, userID int64, email,
 		},
 	}
 
-	log.Println("access token claims:", claims)
-
 	token := jwtLib.NewWithClaims(jwtLib.SigningMethodHS256, claims)
-
-	log.Println("generating access token with claims:", token)
 
 	return token.SignedString([]byte(j.cfg.AccessSecret))
 }
@@ -58,11 +53,7 @@ func (j *jwtHS256) GenerateRefreshToken(ctx context.Context, userID int64) (stri
 		ExpiresAt: jwtLib.NewNumericDate(now.Add(j.cfg.RefreshTokenExpire)),
 	}
 
-	log.Println("refresh token claims:", claims)
-
 	token := jwtLib.NewWithClaims(jwtLib.SigningMethodHS256, claims)
-
-	log.Println("generating refresh token with claims:", token)
 
 	return token.SignedString([]byte(j.cfg.RefreshSecret))
 }
