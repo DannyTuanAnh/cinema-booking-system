@@ -56,11 +56,11 @@ func (n *NormalRateLimiter) GetRateLimiter(ip string) *rate.Limiter {
 
 	client, exists := clients[ip]
 	if !exists {
-		// r = 5 -> token được thêm vào bucket với tốc độ 5 token / giây
-		// b = 10 -> dung lượng tối đa của bucket là 10 token
-		// => số request tối đa trong 1 giây là 10 (khi bucket đầy) và sau đó là 5 request / giây
+		// r = 2 -> token được thêm vào bucket với tốc độ 2 token / giây
+		// b = 5 -> dung lượng tối đa của bucket là 5 token
+		// => số request tối đa trong 1 giây là 5 (khi bucket đầy) và sau đó là 2 request / giây
 
-		limiter := rate.NewLimiter(5, 10)
+		limiter := rate.NewLimiter(2, 5)
 		newClient := &NormalRateLimiter{limiter: limiter, lastSeen: time.Now()}
 		clients[ip] = newClient
 		clientsMu.Unlock()
