@@ -3,8 +3,8 @@ package seat_services
 import (
 	"context"
 
-	"cinema.com/demo/internal/model"
-	"cinema.com/demo/internal/repository"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/repository"
 )
 
 type SeatService struct {

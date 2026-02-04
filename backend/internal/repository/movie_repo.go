@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
-	"cinema.com/demo/internal/model"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
 )
 
 type MovieRepository interface {

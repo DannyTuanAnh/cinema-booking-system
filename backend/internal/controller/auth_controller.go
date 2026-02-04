@@ -4,8 +4,8 @@ import (
 	"log"
 	"net/http"
 
-	"cinema.com/demo/internal/model"
-	auth_service "cinema.com/demo/internal/service/auth"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
+	auth_service "github.com/DannyTuanAnh/cinema-booking-system/internal/service/auth"
 	"github.com/gin-gonic/gin"
 )
 

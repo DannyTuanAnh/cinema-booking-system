@@ -6,7 +6,7 @@ import (
 	"database/sql"
 	"encoding/hex"
 
-	"cinema.com/demo/internal/model"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
 )
 
 type RefreshTokenRepo interface {

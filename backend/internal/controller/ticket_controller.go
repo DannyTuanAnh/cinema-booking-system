@@ -3,7 +3,7 @@ package controller
 import (
 	"net/http"
 
-	ticket_service "cinema.com/demo/internal/service/ticket"
+	ticket_service "github.com/DannyTuanAnh/cinema-booking-system/internal/service/ticket"
 	"github.com/gin-gonic/gin"
 )
 

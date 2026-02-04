@@ -6,7 +6,7 @@ import (
 	"errors"
 	"fmt"
 
-	"cinema.com/demo/internal/model"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
 	"github.com/lib/pq"
 )
 

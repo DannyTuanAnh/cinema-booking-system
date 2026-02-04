@@ -3,9 +3,9 @@ package seat
 import (
 	"net/http"
 
-	"cinema.com/demo/bff/clients/seat"
-	"cinema.com/demo/bff/dto"
-	"cinema.com/demo/bff/utils"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/clients/seat"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/dto"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/utils"
 	"github.com/gin-gonic/gin"
 )
 

@@ -6,9 +6,9 @@ import (
 	"log"
 	"strings"
 
-	repo "cinema.com/demo/bff/repository"
-	"cinema.com/demo/bff/utils"
-	pkgFile "cinema.com/demo/pkg/file"
+	repo "github.com/DannyTuanAnh/cinema-booking-system/bff/repository"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/utils"
+	pkgFile "github.com/DannyTuanAnh/cinema-booking-system/pkg/file"
 )
 
 func GenerateAPIKey(path string, clientType string, maxReq int, winSec int, database *sql.DB) error {

@@ -5,7 +5,7 @@ import (
 
 	"log"
 
-	"cinema.com/demo/internal/repository"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/repository"
 )
 
 type BookService struct {

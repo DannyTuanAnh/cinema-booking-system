@@ -3,9 +3,9 @@ package controller
 import (
 	"net/http"
 
-	"cinema.com/demo/internal/domain"
-	"cinema.com/demo/internal/model"
-	book_service "cinema.com/demo/internal/service/book"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/domain"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
+	book_service "github.com/DannyTuanAnh/cinema-booking-system/internal/service/book"
 	"github.com/gin-gonic/gin"
 )
 

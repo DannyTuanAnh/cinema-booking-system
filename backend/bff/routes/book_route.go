@@ -3,8 +3,8 @@ package routes
 import (
 	"os"
 
-	"cinema.com/demo/bff/clients/book"
-	"cinema.com/demo/bff/controllers/book"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/clients/book"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/controllers/book"
 	"github.com/gin-gonic/gin"
 )
 

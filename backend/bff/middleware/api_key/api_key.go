@@ -3,8 +3,8 @@ package MiddlewareApiKey
 import (
 	"database/sql"
 
-	"cinema.com/demo/bff/repository"
-	"cinema.com/demo/bff/utils"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/repository"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/utils"
 	"github.com/gin-gonic/gin"
 )
 

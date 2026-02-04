@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"strings"
 
-	jwt "cinema.com/demo/pkg/jwt_service"
+	jwt "github.com/DannyTuanAnh/cinema-booking-system/pkg/jwt_service"
 	"github.com/gin-gonic/gin"
 )
 

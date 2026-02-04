@@ -3,7 +3,7 @@ package ticket
 import (
 	"net/http"
 
-	"cinema.com/demo/bff/clients/ticket"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/clients/ticket"
 	"github.com/gin-gonic/gin"
 )
 

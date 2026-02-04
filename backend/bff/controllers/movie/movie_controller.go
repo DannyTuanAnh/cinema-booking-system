@@ -3,7 +3,7 @@ package movie
 import (
 	"net/http"
 
-	"cinema.com/demo/bff/clients/movie"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/clients/movie"
 	"github.com/gin-gonic/gin"
 )
 

@@ -1,4 +1,4 @@
-module cinema.com/demo
+module github.com/DannyTuanAnh/cinema-booking-system
 
 go 1.24.0
 

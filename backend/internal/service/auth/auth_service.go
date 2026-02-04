@@ -6,9 +6,9 @@ import (
 	"strconv"
 	"time"
 
-	"cinema.com/demo/internal/model"
-	"cinema.com/demo/internal/repository"
-	jwt "cinema.com/demo/pkg/jwt_service"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/repository"
+	jwt "github.com/DannyTuanAnh/cinema-booking-system/pkg/jwt_service"
 	"golang.org/x/crypto/bcrypt"
 )
 

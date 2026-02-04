@@ -12,8 +12,8 @@ import (
 
 	_ "github.com/lib/pq"
 
-	"cinema.com/demo/internal/repository"
-	book_service "cinema.com/demo/internal/service/book"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/repository"
+	book_service "github.com/DannyTuanAnh/cinema-booking-system/internal/service/book"
 )
 
 func setupDB(t *testing.T) *sql.DB {

@@ -5,7 +5,7 @@ import (
 
 	"time"
 
-	MiddlewareRateLimit "cinema.com/demo/bff/middleware/rate_limit"
+	MiddlewareRateLimit "github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/rate_limit"
 	"github.com/redis/go-redis/v9"
 )
 

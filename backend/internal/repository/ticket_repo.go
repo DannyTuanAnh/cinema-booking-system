@@ -4,7 +4,7 @@ import (
 	"context"
 	"database/sql"
 
-	"cinema.com/demo/internal/model"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/model"
 )
 
 type TicketRepository interface {

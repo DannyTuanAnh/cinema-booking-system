@@ -1,7 +1,7 @@
 package routes
 
 import (
-	"cinema.com/demo/internal/controller"
+	"github.com/DannyTuanAnh/cinema-booking-system/internal/controller"
 	"github.com/gin-gonic/gin"
 )
 

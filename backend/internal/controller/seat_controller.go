@@ -3,8 +3,8 @@ package controller
 import (
 	"net/http"
 
-	"cinema.com/demo/bff/utils"
-	seat_service "cinema.com/demo/internal/service/seat"
+	"github.com/DannyTuanAnh/cinema-booking-system/bff/utils"
+	seat_service "github.com/DannyTuanAnh/cinema-booking-system/internal/service/seat"
 	"github.com/gin-gonic/gin"
 )
 
