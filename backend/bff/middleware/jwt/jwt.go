@@ -19,6 +19,36 @@ func NewJWTMiddleware(validator jwt.Validator) *JWTMiddleware {
 	}
 }
 
+func (m *JWTMiddleware) ExtractUser() gin.HandlerFunc {
+	return func(c *gin.Context) {
+
+		authHeader := c.GetHeader("Authorization")
+		if authHeader == "" {
+			log.Println("No Authorization header found")
+			c.Next()
+			return
+		}
+
+		// Expect: Authorization: Bearer <token>
+		parts := strings.SplitN(authHeader, " ", 2)
+		if len(parts) != 2 || parts[0] != "Bearer" {
+			log.Println("Invalid Authorization header format")
+			c.Next()
+			return
+		}
+
+		tokenString := parts[1]
+		claims, err := m.validator.ValidateAccess(c.Request.Context(), tokenString)
+		if err == nil {
+			c.Set("user_id", claims.UserID)
+			log.Println("Extracted user_id from token:", claims.UserID)
+		}
+
+		c.Next()
+	}
+
+}
+
 func (m *JWTMiddleware) Handle() gin.HandlerFunc {
 	return func(c *gin.Context) {
 

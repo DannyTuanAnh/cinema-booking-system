@@ -7,10 +7,10 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/api_key"
-	"github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/cors"
-	"github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/jwt"
-	"github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/rate_limit"
+	MiddlewareApiKey "github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/api_key"
+	MiddlewareCors "github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/cors"
+	MiddlewareJWT "github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/jwt"
+	MiddlewareRateLimit "github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/rate_limit"
 	"github.com/DannyTuanAnh/cinema-booking-system/bff/routes"
 	"github.com/DannyTuanAnh/cinema-booking-system/bff/utils"
 	"github.com/DannyTuanAnh/cinema-booking-system/infra/db"
@@ -99,7 +99,7 @@ func main() {
 	utils.StartRedisHealthChecker(context.Background(), rds, redisHealth, 3*time.Second)
 
 	api := r.Group("/api")
-	api.Use(MiddlewareRateLimit.RateLimitMiddleware(redisLimiter, normalLimiter, redisHealth), MiddlewareApiKey.ApiKeyMiddleware(database))
+	api.Use(jwtMiddleware.ExtractUser(), MiddlewareRateLimit.RateLimitMiddleware(redisLimiter, normalLimiter, redisHealth), MiddlewareApiKey.ApiKeyMiddleware(database))
 	{
 
 		// public
