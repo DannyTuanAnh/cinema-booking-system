@@ -1,4 +1,4 @@
-package middleware
+package MiddlewareJWT
 
 import (
 	"log"

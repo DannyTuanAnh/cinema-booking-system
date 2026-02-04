@@ -1,4 +1,4 @@
-package middleware
+package MiddlewareApiKey
 
 import (
 	"database/sql"

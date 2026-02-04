@@ -1,12 +1,16 @@
 package main
 
 import (
+	"context"
 	"log"
 	"os"
 	"strconv"
 	"time"
 
-	"cinema.com/demo/bff/middleware"
+	"cinema.com/demo/bff/middleware/api_key"
+	"cinema.com/demo/bff/middleware/cors"
+	"cinema.com/demo/bff/middleware/jwt"
+	"cinema.com/demo/bff/middleware/rate_limit"
 	"cinema.com/demo/bff/routes"
 	"cinema.com/demo/bff/utils"
 	"cinema.com/demo/infra/db"
@@ -15,9 +19,14 @@ import (
 	key "cinema.com/demo/pkg/key"
 
 	"github.com/gin-gonic/gin"
+	"github.com/redis/go-redis/v9"
 )
 
 func main() {
+	// Load environment variables from .env file
+	fileEnv := "../../../.env"
+	pkgFile.LoadEnv(fileEnv)
+
 	// Database connection
 	dbConfig := db.DefaultConfig()
 	database, err := db.NewConnection(dbConfig)
@@ -30,10 +39,6 @@ func main() {
 	if err := utils.RegisterValidator(); err != nil {
 		panic(err)
 	}
-
-	fileEnv := "../../../.env"
-
-	pkgFile.LoadEnv(fileEnv)
 
 	// Check if command-line arguments are provided for API key generation
 	if len(os.Args) >= 4 {
@@ -74,16 +79,27 @@ func main() {
 	}
 
 	jwtValidator := jwt.NewValidator(jwtCfg)
-	jwtMiddleware := middleware.NewJWTMiddleware(jwtValidator)
+	jwtMiddleware := MiddlewareJWT.NewJWTMiddleware(jwtValidator)
 
 	// Chạy server bình thường
 	r := gin.Default()
 
 	// Enable CORS for all routes
-	r.Use(middleware.CORSMiddleware())
+	r.Use(MiddlewareCors.CORSMiddleware())
+
+	// Khởi tạo Redis client cho Rate Limiting
+	rds := redis.NewClient(&redis.Options{Addr: os.Getenv("REDIS")})
+	redisLimiter := MiddlewareRateLimit.NewRedisRateLimiter(rds, 60, 100) // 100 requests per 60 seconds
+	normalLimiter := MiddlewareRateLimit.NewNormalRateLimiter()
+
+	// Khởi tạo RedisHealth để theo dõi trạng thái của Redis
+	redisHealth := MiddlewareRateLimit.NewRedisHealth()
+
+	// Bắt đầu kiểm tra trạng thái của Redis mỗi 3 giây
+	utils.StartRedisHealthChecker(context.Background(), rds, redisHealth, 3*time.Second)
 
 	api := r.Group("/api")
-	api.Use(middleware.RateLimitRedis(), middleware.ApiKeyMiddleware(database))
+	api.Use(MiddlewareRateLimit.RateLimitMiddleware(redisLimiter, normalLimiter, redisHealth), MiddlewareApiKey.ApiKeyMiddleware(database))
 	{
 
 		// public
