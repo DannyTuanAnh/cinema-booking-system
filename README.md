@@ -1,442 +1,143 @@
-# 🎬 Cinema Booking System - Frontend
+# Cinema Booking Application
 
-Frontend application cho hệ thống đặt vé xem phim, xây dựng bằng HTML/CSS/JavaScript thuần (Vanilla JS).
+## Overview
 
-## 📁 Cấu trúc thư mục
+The system is designed to address the problem of movie ticket booking in a highly concurrent environment, where a large number of users may access the application and perform actions simultaneously—especially scenarios in which multiple users attempt to book the same seat at the same time.
+
+## Description
+
+The application allows users to:
+
+- Register, log in, and authenticate using JWT;
+- Browse movies, showtimes, and seat layouts;
+- Perform real-time ticket booking;
+- Manage booked tickets (view booking history, seat information, and showtime details);
+- Ensure that each seat can be successfully booked by only one user, even when multiple booking requests are submitted concurrently.
+
+In addition, the system is equipped with protective mechanisms such as Rate Limiting and API Keys to ensure backend stability and security.
+
+## Architecture and Technologies
+
+The system follows the **Backend for Frontend (BFF)** architecture, a variation of the API Gateway pattern, where the backend is responsible for handling business logic, security, and data orchestration.
+
+### Core Technologies
+
+#### 1. Go (Golang)
+
+Go is used as the primary programming language due to:
+
+- High performance and low memory overhead;
+- Strong support for concurrency through goroutines;
+- Built-in synchronization primitives such as atomic operations, mutexes, and channels, which help ensure data integrity in multi-threaded environments;
+- Suitability for high-throughput and high-concurrency systems.
+
+#### 2. Gin Framework
+
+Gin is a lightweight and high-performance HTTP framework that provides:
+
+- Clear and structured middleware support (JWT, Rate Limiting, CORS, API Key);
+- Easy integration with Clean Architecture principles;
+- Efficient request handling suitable for scalable backend services.
+
+#### 3. PostgreSQL
+
+PostgreSQL is used to store core business data, including users, movies, showtimes, tickets, and seats.
+
+To handle concurrent ticket booking, the system uses database transactions combined with `SELECT ... FOR UPDATE`. The mechanism works as follows:
+
+- `SELECT ... FOR UPDATE` explicitly acquires row-level locks at read time, preventing other transactions from modifying or locking the same rows until the current transaction completes (COMMIT or ROLLBACK);
+- This approach guarantees strict consistency in high-contention scenarios such as seat booking and prevents concurrency anomalies like Lost Updates.
+- Fine-grained locking is applied by locking only the rows whose `seat_id` values belong to the `p_seat_ids` array. This allows other transactions to operate on different seats (rows) within the same table without being blocked.
+
+#### 4. Redis
+
+Redis is primarily used for Rate Limiting:
+
+- Reduces load on the backend and database during traffic spikes;
+- Ensures accurate rate limiting across multiple application instances;
+- Provides an automatic fallback to in-memory rate limiting when Redis is unavailable.
+
+#### 5. JWT (JSON Web Token)
+
+JWT is used for user authentication and authorization, with a clear separation between:
+
+- A lightweight JWT used to identify logged-in users (mainly for user-based rate limiting);
+- A full JWT used to protect APIs that require authentication.
+
+## Rate Limiting Strategy
+
+The system applies rate limiting at multiple levels:
+
+- For unauthenticated users → rate limiting based on IP address;
+- For authenticated users → rate limiting based on `user_id`;
+- Redis is preferred to ensure consistency in distributed environments;
+- If Redis becomes unavailable, the system automatically falls back to in-memory rate limiting.
+
+This strategy helps:
+
+- Mitigate DDoS attacks, brute-force attempts, and spam requests;
+- Prevent server overload during traffic spikes;
+- Avoid scenarios where a single client monopolizes system resources and degrades the experience for others.
+
+## Authentication and User Management
+
+After logging in, users receive an **Access Token** and a **Refresh Token**, which are stored in cookies with security attributes such as `HttpOnly`, `Secure`, and `SameSite`.
+
+Since JWT is inherently stateless, a leaked token cannot be revoked until it expires. To address this limitation, the system combines Refresh Tokens with **Refresh Token Rotation** to enhance security.
+
+Without refresh tokens, access tokens would need a long expiration time (e.g., 7 days) to avoid frequent re-authentication. If such a token were compromised, an attacker would have full access for the entire duration. With refresh tokens in place, access tokens can be kept very short-lived (5–15 minutes), significantly reducing the impact of token leakage.
+
+### Refresh Token Rotation Flow
+
+Each time a client uses an old refresh token to obtain a new access token, the server invalidates the old refresh token and issues a completely new token pair.
+
+Benefits include:
+
+- **Account takeover detection**: If an attacker uses a stolen refresh token first, the legitimate user's subsequent request will reveal that the token has already been used;
+- **Self-revocation mechanism**: Upon detecting refresh token reuse, the system invalidates all active tokens associated with the user and forces re-authentication;
+- **Reduced token lifetime exposure**: Even if a refresh token is stolen, it remains usable only for a very short window before becoming invalid.
 
 ```
-frontend/
-├── index.html                      # Trang chủ
-├── pages/                          # Các trang chức năng
-│   ├── login.html                 # Đăng nhập
-│   ├── register.html              # Đăng ký
-│   ├── movies.html                # Danh sách phim
-│   ├── showtimes.html             # Chọn suất chiếu
-│   ├── seat-selection.html        # Chọn ghế
-│   └── my-tickets.html            # Vé của tôi
-│
-├── assets/                         # Tài nguyên tĩnh
-│   ├── css/                       # Styles
-│   │   ├── common.css            # Styles chung
-│   │   ├── home.css              # Trang chủ
-│   │   ├── auth.css              # Đăng nhập/Đăng ký
-│   │   ├── movies.css            # Danh sách phim
-│   │   ├── showtimes.css         # Suất chiếu
-│   │   ├── seat-selection.css    # Chọn ghế
-│   │   └── tickets.css           # Vé của tôi
-│   │
-│   └── js/                        # JavaScript
-│       ├── config.js             # Cấu hình API
-│       │
-│       ├── utils/                # Tiện ích
-│       │   ├── storage.js        # LocalStorage wrapper
-│       │   ├── auth.js           # Authentication helpers
-│       │   └── api.js            # API client
-│       │
-│       ├── components/           # Components tái sử dụng
-│       │   └── header.js         # Header component
-│       │
-│       └── modules/              # Module theo nghiệp vụ
-│           ├── auth/             # Xác thực
-│           │   ├── login.js
-│           │   └── register.js
-│           ├── movies/           # Phim
-│           │   └── movies-list.js
-│           ├── showtimes/        # Suất chiếu
-│           │   └── showtimes-list.js
-│           ├── booking/          # Đặt vé
-│           │   └── seat-selection.js
-│           └── tickets/          # Vé
-│               └── my-tickets.js
-│
-└── README.md                      # Tài liệu này
+Login
+ ├─ Access Token (15m)
+ └─ Refresh Token (RT₁)
+
+Refresh (RT₁)
+ ├─ New Access Token
+ └─ New Refresh Token (RT₂)
+    └─ RT₁ revoked
+
+Refresh (RT₂)
+ ├─ New Access Token
+ └─ New Refresh Token (RT₃)
+    └─ RT₂ revoked
 ```
 
-## 🎯 Tính năng
+JWT is used to:
 
-### 1. **Authentication (Xác thực)**
+- Authenticate users;
+- Attach `user_id` to the request context;
+- Control access between public APIs and authenticated APIs.
 
-- ✅ Đăng ký tài khoản mới
-- ✅ Đăng nhập
-- ✅ Đăng xuất
-- ✅ JWT token management
-- ✅ Auto redirect khi chưa đăng nhập
+Public APIs (e.g., browsing movies and showtimes) remain accessible even when the user is logged in.
 
-### 2. **Movies (Phim)**
+## Implementation Challenges
 
-- ✅ Xem danh sách phim đang chiếu
-- ✅ Xem thông tin chi tiết phim
-- ✅ Lọc phim theo thể loại
-- ✅ Hiển thị đánh giá và thời lượng
+During system development, several key challenges were encountered:
 
-### 3. **Showtimes (Suất chiếu)**
+- **Concurrent ticket booking**: Ensuring that no duplicate seat bookings occur when multiple users select the same seat simultaneously;
+- **Middleware ordering**: Determining the correct execution order for Rate Limiting, JWT, and API Key middleware to maintain both security and correct business logic;
+- **Rate limiting in distributed environments**: Combining Redis-based and in-memory rate limiting with Redis health checks to ensure resilience;
+- **Development vs. production environments**: Handling differences between local environments (self-signed HTTPS) and production environments (Render, AWS) while maintaining strong security guarantees.
 
-- ✅ Xem danh sách suất chiếu theo phim
-- ✅ Nhóm suất chiếu theo ngày
-- ✅ Hiển thị thông tin rạp và phòng chiếu
+These challenges highlight real-world issues involved in building backend systems with high requirements for concurrency, security, and scalability.
 
-### 4. **Booking (Đặt vé)**
+## Future Enhancements
 
-- ✅ Chọn ghế trực quan
-- ✅ Hiển thị trạng thái ghế (trống/đã đặt/đang chọn)
-- ✅ Chọn nhiều ghế cùng lúc
-- ✅ Xử lý concurrency (conflict detection)
-- ✅ Booking confirmation
+In future iterations, the system may be extended with:
 
-### 5. **My Tickets (Vé của tôi)**
-
-- ✅ Xem danh sách vé đã đặt
-- ✅ Hiển thị thông tin chi tiết vé
-- ✅ Phân loại vé sắp chiếu/đã chiếu
-- ✅ Sắp xếp theo thời gian
-
-## 🚀 Cài đặt và Chạy
-
-### 1. Cấu hình API Key
-
-Mở file `assets/js/config.js` và cập nhật API Key:
-
-```javascript
-const API_CONFIG = {
-  BASE_URL: "http://localhost:8080/api",
-  API_KEY: "YOUR_API_KEY_HERE", // ⚠️ Thay bằng API key thực tế
-  // ...
-};
-```
-
-**Lấy API Key từ backend:**
-
-```bash
-# Chạy backend trước
-cd ../backend
-
-# Tạo API key cho web client
-go run cmd/bff/main.go web 100 60
-
-# Copy API key được generate và paste vào config.js
-```
-
-### 2. Chạy Frontend
-
-**Option 1: Sử dụng Live Server (VS Code)**
-
-1. Install extension "Live Server"
-2. Right-click vào `index.html`
-3. Chọn "Open with Live Server"
-4. Browser sẽ tự động mở `http://localhost:5500`
-
-**Option 2: Sử dụng Python HTTP Server**
-
-```bash
-# Python 3
-python -m http.server 8000
-
-# Truy cập: http://localhost:8000
-```
-
-**Option 3: Sử dụng Node.js http-server**
-
-```bash
-# Install http-server globally
-npm install -g http-server
-
-# Run server
-http-server -p 8000
-
-# Truy cập: http://localhost:8000
-```
-
-### 3. Đảm bảo Backend đang chạy
-
-```bash
-cd ../backend
-
-# Run BFF server (port 8080)
-go run cmd/bff/main.go
-
-# Run Core server (port 8081)
-go run cmd/core/main.go
-```
-
-## 🔧 Cấu hình
-
-### API Endpoints (config.js)
-
-```javascript
-ENDPOINTS: {
-    LOGIN: '/auth/login',
-    REGISTER: '/auth/register',
-    MOVIES: '/movies',
-    SHOWS: '/shows',
-    SEATS: '/seats',
-    BOOK: '/book',
-    MY_TICKETS: '/tickets'
-}
-```
-
-### Storage Keys
-
-```javascript
-STORAGE_KEYS: {
-    TOKEN: 'cinema_auth_token',
-    USER_ID: 'cinema_user_id',
-    USER_EMAIL: 'cinema_user_email',
-    USER_NAME: 'cinema_user_name'
-}
-```
-
-### Seat Status
-
-```javascript
-SEAT_STATUS: {
-    AVAILABLE: 'available',
-    BOOKED: 'booked',
-    SELECTED: 'selected'  // Client-side only
-}
-```
-
-## 📱 Responsive Design
-
-Giao diện được thiết kế responsive cho:
-
-- 🖥️ Desktop (> 768px)
-- 📱 Tablet (768px)
-- 📱 Mobile (< 768px)
-
-## 🎨 Design System
-
-### Colors
-
-```css
---primary-color: #e50914; /* Netflix Red */
---secondary-color: #564d4d;
---background-dark: #141414;
---background-light: #1a1a1a;
---background-card: #2a2a2a;
---text-primary: #ffffff;
---text-secondary: #b3b3b3;
-```
-
-### Typography
-
-- Font family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto'
-- Base font size: 16px
-- Line height: 1.6
-
-### Spacing
-
-```css
---spacing-xs: 0.5rem;
---spacing-sm: 1rem;
---spacing-md: 1.5rem;
---spacing-lg: 2rem;
---spacing-xl: 3rem;
-```
-
-## 🔒 Security Features
-
-### 1. **Triple-Layer Security**
-
-- API Key authentication
-- JWT token authentication
-- Rate limiting
-
-### 2. **XSS Protection**
-
-- Input validation
-- Output encoding
-- CSP headers (nếu deploy production)
-
-### 3. **CSRF Protection**
-
-- Token-based authentication
-- SameSite cookies (nếu dùng cookies)
-
-## 🧪 Testing
-
-### Manual Testing Checklist
-
-**Authentication:**
-
-- [ ] Đăng ký tài khoản mới
-- [ ] Đăng nhập với tài khoản hợp lệ
-- [ ] Đăng nhập với sai mật khẩu
-- [ ] Đăng xuất
-
-**Movies:**
-
-- [ ] Load danh sách phim
-- [ ] Click vào phim để xem suất chiếu
-
-**Booking:**
-
-- [ ] Chọn suất chiếu
-- [ ] Chọn ghế
-- [ ] Đặt vé thành công
-- [ ] Xử lý conflict khi ghế đã được đặt
-
-**My Tickets:**
-
-- [ ] Xem danh sách vé
-- [ ] Phân loại vé sắp chiếu/đã chiếu
-
-### Concurrency Testing
-
-**Test 2 users đặt cùng ghế:**
-
-1. Mở 2 browser khác nhau (Chrome + Firefox)
-2. Đăng nhập 2 tài khoản khác nhau
-3. Cùng chọn 1 suất chiếu
-4. Cùng chọn 1 ghế
-5. Click "Đặt vé" đồng thời
-
-**Kết quả mong đợi:**
-
-- ✅ User 1: Đặt vé thành công
-- ❌ User 2: Lỗi "Ghế đã được đặt"
-
-## 📖 API Integration
-
-### Request Flow
-
-```
-1. User Action (Click button)
-   ↓
-2. Validation (Client-side)
-   ↓
-3. API Call (api.js)
-   ↓
-4. BFF Server (port 8080)
-   ├─ API Key check
-   ├─ Rate limit check
-   └─ JWT validation
-   ↓
-5. Core Server (port 8081)
-   ├─ Business logic
-   └─ Database
-   ↓
-6. Response
-   ↓
-7. Update UI
-```
-
-### Example: Booking API
-
-```javascript
-// Client code
-const response = await API.post(API_CONFIG.ENDPOINTS.BOOK, {
-    seats: [1, 2, 3]
-}, true); // Include auth token
-
-// HTTP Request
-POST http://localhost:8080/api/book
-Headers:
-  Content-Type: application/json
-  X-API-Key: web_xxx...
-  Authorization: Bearer eyJhbGc...
-Body:
-  { "seats": [1, 2, 3] }
-```
-
-## 🐛 Troubleshooting
-
-### Lỗi CORS
-
-**Triệu chứng:** `Access to fetch at 'http://localhost:8080' from origin 'http://localhost:5500' has been blocked by CORS policy`
-
-**Giải pháp:**
-
-1. Kiểm tra backend đã enable CORS middleware
-2. Đảm bảo `Access-Control-Allow-Origin` header được set
-3. Check `Access-Control-Allow-Headers` includes `X-API-Key`
-
-### Lỗi 401 Unauthorized
-
-**Triệu chứng:** Luôn bị redirect về trang login
-
-**Giải pháp:**
-
-1. Check API Key trong `config.js`
-2. Check JWT token trong localStorage
-3. Kiểm tra token expiration
-4. Clear localStorage và login lại
-
-### Lỗi 429 Too Many Requests
-
-**Triệu chứng:** `Bạn đã gửi quá nhiều yêu cầu`
-
-**Giải pháp:**
-
-1. Đợi 60 giây (rate limit window)
-2. Hoặc tăng rate limit trong backend
-3. Check Redis đang chạy
-
-### UI không load
-
-**Giải pháp:**
-
-1. Check browser console (F12) for errors
-2. Verify API endpoints trong `config.js`
-3. Check backend servers đang chạy
-4. Clear browser cache
-
-## 🚀 Deployment
-
-### Production Checklist
-
-- [ ] Update API_CONFIG.BASE_URL to production URL
-- [ ] Update API_KEY with production key
-- [ ] Minify CSS/JS files
-- [ ] Enable CSP headers
-- [ ] Add analytics (Google Analytics, etc.)
-- [ ] Test on multiple browsers
-- [ ] Test on mobile devices
-- [ ] Setup CDN for static assets
-- [ ] Configure caching headers
-
-### Build for Production
-
-```bash
-# Minify CSS (using clean-css-cli)
-npm install -g clean-css-cli
-cleancss -o assets/css/styles.min.css assets/css/*.css
-
-# Minify JS (using uglify-js)
-npm install -g uglify-js
-uglifyjs assets/js/**/*.js -o assets/js/bundle.min.js
-```
-
-## 📚 Technologies Used
-
-- **HTML5** - Markup
-- **CSS3** - Styling (Flexbox, Grid, Custom Properties)
-- **JavaScript (ES6+)** - Logic
-  - Async/Await
-  - Fetch API
-  - LocalStorage API
-  - URLSearchParams
-- **No frameworks/libraries** - Vanilla JS only
-
-## 🤝 Contributing
-
-Contributions are welcome! Please follow these guidelines:
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Test thoroughly
-5. Submit a pull request
-
-## 📄 License
-
-This is an educational project for DBMS course.
-
-## 👥 Credits
-
-Developed by: [Your Name]
-Course: Database Management Systems
-Year: 2026
-
----
-
-**Happy Coding! 🎬🍿**
+- Online payment integration;
+- Advanced role-based access control (admin, staff);
+- Centralized monitoring and logging (Prometheus, Grafana);
+- Migration toward a microservices architecture as the system scales;
+- Enhanced JWT security by combining tokens with `session_id` for tighter session management.
