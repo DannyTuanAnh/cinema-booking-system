@@ -90,7 +90,16 @@ func main() {
 	r.Use(MiddlewareCors.CORSMiddleware())
 
 	// Khởi tạo Redis client cho Rate Limiting
-	rds := redis.NewClient(&redis.Options{Addr: os.Getenv("REDIS")})
+	// sử dụng ở local
+	// rds := redis.NewClient(&redis.Options{Addr: os.Getenv("REDIS")})
+
+	// sử dụng ở Render / Production
+	opt, err := redis.ParseURL(os.Getenv("REDIS_URL"))
+	if err != nil {
+		log.Fatalf("Invalid REDIS_URL: %v", err)
+	}
+
+	rds := redis.NewClient(opt)
 	redisLimiter := MiddlewareRateLimit.NewRedisRateLimiter(rds, 60, 100) // 100 requests per 60 seconds
 	normalLimiter := MiddlewareRateLimit.NewNormalRateLimiter()
 
