@@ -18,11 +18,17 @@ import (
 	ticket_service "github.com/DannyTuanAnh/cinema-booking-system/internal/service/ticket"
 	jwt "github.com/DannyTuanAnh/cinema-booking-system/pkg/jwt_service"
 	"github.com/gin-gonic/gin"
-	"github.com/joho/godotenv"
+	// "github.com/joho/godotenv"
 )
 
 func main() {
 	r := gin.Default()
+
+	// err = godotenv.Load("../../../.env")
+	// if err != nil {
+	// 	log.Println("No .env file found")
+	// 	panic(err)
+	// }
 
 	// Database connection
 	dbConfig := db.DefaultConfig()
@@ -31,12 +37,6 @@ func main() {
 		log.Fatalf("Failed to connect to database: %v", err)
 	}
 	defer database.Close()
-
-	err = godotenv.Load("../../../.env")
-	if err != nil {
-		log.Println("No .env file found")
-		panic(err)
-	}
 
 	// expireHours, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_HOURS"))
 	// expireMinutes, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_MINUTES"))

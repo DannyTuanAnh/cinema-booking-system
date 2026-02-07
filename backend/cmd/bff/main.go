@@ -4,7 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
-	"strconv"
+	// "strconv"
 	"time"
 
 	MiddlewareApiKey "github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/api_key"
@@ -14,9 +14,9 @@ import (
 	"github.com/DannyTuanAnh/cinema-booking-system/bff/routes"
 	"github.com/DannyTuanAnh/cinema-booking-system/bff/utils"
 	"github.com/DannyTuanAnh/cinema-booking-system/infra/db"
-	pkgFile "github.com/DannyTuanAnh/cinema-booking-system/pkg/file"
+	// pkgFile "github.com/DannyTuanAnh/cinema-booking-system/pkg/file"
 	jwt "github.com/DannyTuanAnh/cinema-booking-system/pkg/jwt_service"
-	key "github.com/DannyTuanAnh/cinema-booking-system/pkg/key"
+	// key "github.com/DannyTuanAnh/cinema-booking-system/pkg/key"
 
 	"github.com/gin-gonic/gin"
 	"github.com/redis/go-redis/v9"
@@ -24,8 +24,8 @@ import (
 
 func main() {
 	// Load environment variables from .env file
-	fileEnv := "../../../.env"
-	pkgFile.LoadEnv(fileEnv)
+	// fileEnv := "../../../.env"
+	// pkgFile.LoadEnv(fileEnv)
 
 	// Database connection
 	dbConfig := db.DefaultConfig()
@@ -40,28 +40,28 @@ func main() {
 		panic(err)
 	}
 
-	// Check if command-line arguments are provided for API key generation
-	if len(os.Args) >= 4 {
-		clientType := os.Args[1]
+	// // Check if command-line arguments are provided for API key generation
+	// if len(os.Args) >= 4 {
+	// 	clientType := os.Args[1]
 
-		maxReq, err := strconv.Atoi(os.Args[2])
-		if err != nil {
-			log.Fatalf("Invalid maxReq parameter: %v", err)
-		}
+	// 	maxReq, err := strconv.Atoi(os.Args[2])
+	// 	if err != nil {
+	// 		log.Fatalf("Invalid maxReq parameter: %v", err)
+	// 	}
 
-		winSec, err := strconv.Atoi(os.Args[3])
-		if err != nil {
-			log.Fatalf("Invalid winSec parameter: %v", err)
-		}
+	// 	winSec, err := strconv.Atoi(os.Args[3])
+	// 	if err != nil {
+	// 		log.Fatalf("Invalid winSec parameter: %v", err)
+	// 	}
 
-		// Generate the API key
-		err = key.GenerateAPIKey(fileEnv, clientType, maxReq, winSec, database)
-		if err != nil {
-			log.Fatalf("Failed to generate API key: %v", err)
-		}
+	// 	// Generate the API key
+	// 	err = key.GenerateAPIKey(fileEnv, clientType, maxReq, winSec, database)
+	// 	if err != nil {
+	// 		log.Fatalf("Failed to generate API key: %v", err)
+	// 	}
 
-		return // Close the application after generating the API key
-	}
+	// 	return // Close the application after generating the API key
+	// }
 
 	// expireHours, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_HOURS"))
 	// expireMinutes, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_MINUTES"))
