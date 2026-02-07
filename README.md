@@ -41,13 +41,76 @@ Gin is a lightweight and high-performance HTTP framework that provides:
 
 #### 3. PostgreSQL
 
-PostgreSQL is used to store core business data, including users, movies, showtimes, tickets, and seats.
+PostgreSQL is used to store the core business data of the system, including users, movies, showtimes, seats, and bookings.
 
-To handle concurrent ticket booking, the system uses database transactions combined with `SELECT ... FOR UPDATE`. The mechanism works as follows:
+To address the concurrent seat booking problem, the system leverages database transactions combined with `SELECT … FOR UPDATE` to ensure data consistency in a high-contention environment. The mechanism works as follows:
 
-- `SELECT ... FOR UPDATE` explicitly acquires row-level locks at read time, preventing other transactions from modifying or locking the same rows until the current transaction completes (COMMIT or ROLLBACK);
-- This approach guarantees strict consistency in high-contention scenarios such as seat booking and prevents concurrency anomalies like Lost Updates.
+- `SELECT ... FOR UPDATE` explicitly acquires **row-level** locks at read time, preventing other transactions from modifying or locking the same rows until the current transaction completes (**COMMIT** or **ROLLBACK**);
+- This approach guarantees strict consistency in high-contention scenarios such as seat booking and prevents concurrency anomalies like **Lost Updates**.
 - Fine-grained locking is applied by locking only the rows whose `seat_id` values belong to the `p_seat_ids` array. This allows other transactions to operate on different seats (rows) within the same table without being blocked.
+
+##### Limitations of the application-level approach
+
+In earlier versions of the system, seat booking logic was implemented at the application layer. Although the operations were executed within a single transaction, this approach had several drawbacks:
+
+- Business logic was scattered across multiple functions;
+- Refactoring introduced a higher risk of subtle bugs;
+- New developers could easily omit a critical step in the workflow.
+
+```
+LockSeats()
+CountSeatsForUpdate()
+BookSeats()
+CreateBooking()
+```
+
+##### Solution: Moving invariants to the Database
+
+To overcome these issues, all logic related to **concurrent seat booking** was migrated to the **Database Management System (DBMS)** using a **stored function**.
+
+This design ensures that **data invariants** are enforced directly at the database level, rather than relying on correctness in application-layer logic.
+
+Advantages:
+
+- **Strong atomicity**: The entire seat booking process is executed within a single database transaction;
+- **Automatic rollback on failure**, independent of application code and error-handling logic;
+- **Database-enforced invariants**: No client or service can violate business rules once they are embedded in the database;
+- **Elimination of race conditions** by avoiding fragmented “check-then-update” patterns.
+
+Disadvantages
+
+- Requires manual configuration and maintenance of database-level logic;
+- Demands a solid understanding of transactions, locking mechanisms, and PL/pgSQL from developers.
+
+```
+CREATE OR REPLACE FUNCTION book_seats(
+    p_user_id bigint,
+    p_seat_ids bigint[]
+) RETURNS void AS $$
+DECLARE
+    p_updated_count int;
+BEGIN
+    PERFORM 1
+    FROM seats
+    WHERE seat_id = ANY (p_seat_ids)
+    FOR UPDATE;
+
+    UPDATE seats
+    SET status = 'booked'
+    WHERE seat_id = ANY (p_seat_ids)
+      AND status = 'available';
+
+    GET DIAGNOSTICS p_updated_count = ROW_COUNT;
+
+    IF p_updated_count <> array_length(p_seat_ids, 1) THEN
+        RAISE EXCEPTION 'Some seats already booked';
+    END IF;
+
+    INSERT INTO bookings(user_id, seat_id)
+    SELECT p_user_id, unnest(p_seat_ids);
+END;
+$$ LANGUAGE plpgsql;
+```
 
 #### 4. Redis
 
