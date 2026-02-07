@@ -15,7 +15,7 @@ func InitSeatRoutes(r *gin.RouterGroup) {
 
 func RegisterSeatRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
-	path := "https://" + addr + "/api"
+	path := addr + "/api"
 
 	seatClient := seat_clients.NewSeatHTTPClient(path)
 

@@ -15,7 +15,7 @@ func InitMovieRoutes(r *gin.RouterGroup) {
 
 func RegisterMovieRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
-	path := "http://" + addr + "/api"
+	path := addr + "/api"
 
 	movieClient := movie_clients.NewMovieHTTPClient(path)
 

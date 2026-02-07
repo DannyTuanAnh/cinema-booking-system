@@ -15,7 +15,7 @@ func InitBookRoutes(r *gin.RouterGroup) {
 
 func RegisterBookRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
-	path := "https://" + addr + "/api"
+	path := addr + "/api"
 
 	bookClient := book_clients.NewBookHTTPClient(path)
 

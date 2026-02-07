@@ -85,13 +85,20 @@ func main() {
 	routes.InitBookRoutes(api, bookController)
 	routes.InitTicketRoutes(api, ticketController)
 
-	addr := os.Getenv("ADDR_SERVER")
+	// addr := os.Getenv("ADDR_SERVER")
 
-	if ENV := os.Getenv("ENV"); ENV == "development" {
-		err = r.RunTLS(addr, "../../certs/localhost+2.pem", "../../certs/localhost+2-key.pem")
-	} else {
-		err = r.Run(addr)
+	// if ENV := os.Getenv("ENV"); ENV == "development" {
+	// 	err = r.RunTLS(addr, "../../certs/localhost+2.pem", "../../certs/localhost+2-key.pem")
+	// } else {
+	// 	err = r.Run(addr)
+	// }
+
+	port := os.Getenv("PORT_CORE")
+	if port == "" {
+		port = "8081" // fallback local
 	}
+
+	err = r.Run(":" + port)
 
 	if err != nil {
 		log.Fatalf("Failed to run server: %v", err)

@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"os"
+
 	// "strconv"
 	"time"
 
@@ -14,6 +15,7 @@ import (
 	"github.com/DannyTuanAnh/cinema-booking-system/bff/routes"
 	"github.com/DannyTuanAnh/cinema-booking-system/bff/utils"
 	"github.com/DannyTuanAnh/cinema-booking-system/infra/db"
+
 	// pkgFile "github.com/DannyTuanAnh/cinema-booking-system/pkg/file"
 	jwt "github.com/DannyTuanAnh/cinema-booking-system/pkg/jwt_service"
 	// key "github.com/DannyTuanAnh/cinema-booking-system/pkg/key"
@@ -117,13 +119,20 @@ func main() {
 		}
 	}
 
-	addr := os.Getenv("ADDR_BFF_SERVER")
+	// addr := os.Getenv("ADDR_BFF_SERVER")
 
-	if ENV := os.Getenv("ENV"); ENV == "development" {
-		err = r.RunTLS(addr, "../../certs/localhost+2.pem", "../../certs/localhost+2-key.pem")
-	} else {
-		err = r.Run(addr)
+	// if ENV := os.Getenv("ENV"); ENV == "development" {
+	// 	err = r.RunTLS(addr, "../../certs/localhost+2.pem", "../../certs/localhost+2-key.pem")
+	// } else {
+	// 	err = r.Run(addr)
+	// }
+
+	port := os.Getenv("PORT_BFF")
+	if port == "" {
+		port = "8080" // fallback local
 	}
+
+	err = r.Run(":" + port)
 
 	if err != nil {
 		log.Fatalf("Failed to run server: %v", err)

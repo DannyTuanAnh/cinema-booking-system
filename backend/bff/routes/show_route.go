@@ -15,7 +15,7 @@ func InitShowRoutes(r *gin.RouterGroup) {
 
 func RegisterShowRoutes(r *gin.RouterGroup) {
 	addr := os.Getenv("ADDR_SERVER")
-	path := "https://" + addr + "/api"
+	path := addr + "/api"
 
 	showClient := show_clients.NewShowHTTPClient(path)
 
