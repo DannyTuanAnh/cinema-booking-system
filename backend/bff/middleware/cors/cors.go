@@ -12,6 +12,9 @@ func CORSMiddleware() gin.HandlerFunc {
 		allowedOrigins := map[string]bool{
 			"https://127.0.0.1:5173": true,
 			"https://localhost:5173": true,
+
+			// frontend trên render
+			"https://cinema-booking-system-hid9.onrender.com": true,
 		}
 
 		if allowedOrigins[origin] {
