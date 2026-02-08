@@ -41,9 +41,6 @@ func main() {
 	expireHours, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_HOURS"))
 	expireMinutes, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_MINUTES"))
 
-	log.Println("JWT Expire Minutes:", expireMinutes)
-	log.Println("JWT Expire Hours:", expireHours)
-
 	jwtCfg := jwt.JWTConfig{
 		Issuer: os.Getenv("JWT_ISSUER"),
 
