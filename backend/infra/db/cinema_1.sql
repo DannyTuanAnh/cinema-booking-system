@@ -2,17 +2,12 @@
 -- PostgreSQL database dump
 --
 
+\restrict f0JXcSAPeXGDVe4vTCIUeKEJQUAlvICN4kslDBtJA3iSDe54zi5E81PjzANAihg
 
 -- Dumped from database version 16.11
 -- Dumped by pg_dump version 16.11
 
--- Started on 2026-02-07 22:57:48
-
-
-psql "postgresql://cinema_booking_system_database_user:yAPu3JsZ3wNffDXa0TnTHVII56yaqtP3@dpg-d63jfaer433s73dq9bkg-a.oregon-postgres.render.com/cinema_booking_system_database"
-
-
-
+-- Started on 2026-02-04 21:55:34
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -66,6 +61,7 @@ end;
 $$;
 
 
+ALTER FUNCTION public.book_seats(p_user_id bigint, p_seat_ids bigint[]) OWNER TO postgres;
 
 SET default_tablespace = '';
 
@@ -90,6 +86,8 @@ CREATE TABLE public.api_keys (
 );
 
 
+ALTER TABLE public.api_keys OWNER TO postgres;
+
 --
 -- TOC entry 225 (class 1259 OID 16482)
 -- Name: api_keys_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -102,6 +100,8 @@ CREATE SEQUENCE public.api_keys_id_seq
     NO MAXVALUE
     CACHE 1;
 
+
+ALTER SEQUENCE public.api_keys_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 4970 (class 0 OID 0)
@@ -125,6 +125,8 @@ CREATE TABLE public.bookings (
 );
 
 
+ALTER TABLE public.bookings OWNER TO postgres;
+
 --
 -- TOC entry 221 (class 1259 OID 16444)
 -- Name: bookings_booking_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -138,6 +140,8 @@ CREATE SEQUENCE public.bookings_booking_id_seq
     NO MAXVALUE
     CACHE 1;
 
+
+ALTER SEQUENCE public.bookings_booking_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 4971 (class 0 OID 0)
@@ -168,6 +172,8 @@ CREATE TABLE public.movies (
 );
 
 
+ALTER TABLE public.movies OWNER TO postgres;
+
 --
 -- TOC entry 223 (class 1259 OID 16464)
 -- Name: movies_movie_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -181,6 +187,8 @@ CREATE SEQUENCE public.movies_movie_id_seq
     NO MAXVALUE
     CACHE 1;
 
+
+ALTER SEQUENCE public.movies_movie_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 4972 (class 0 OID 0)
@@ -207,7 +215,7 @@ CREATE TABLE public.refresh_tokens (
 );
 
 
-
+ALTER TABLE public.refresh_tokens OWNER TO postgres;
 
 --
 -- TOC entry 227 (class 1259 OID 16504)
@@ -222,7 +230,7 @@ CREATE SEQUENCE public.refresh_tokens_id_seq
     CACHE 1;
 
 
-
+ALTER SEQUENCE public.refresh_tokens_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 4973 (class 0 OID 0)
@@ -247,7 +255,7 @@ CREATE TABLE public.seats (
 );
 
 
-
+ALTER TABLE public.seats OWNER TO postgres;
 
 --
 -- TOC entry 219 (class 1259 OID 16428)
@@ -263,6 +271,7 @@ CREATE SEQUENCE public.seats_seat_id_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.seats_seat_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 4974 (class 0 OID 0)
@@ -285,7 +294,7 @@ CREATE TABLE public.shows (
 );
 
 
-
+ALTER TABLE public.shows OWNER TO postgres;
 
 --
 -- TOC entry 217 (class 1259 OID 16416)
@@ -301,7 +310,7 @@ CREATE SEQUENCE public.shows_show_id_seq
     CACHE 1;
 
 
-
+ALTER SEQUENCE public.shows_show_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 4975 (class 0 OID 0)
@@ -325,6 +334,7 @@ CREATE TABLE public.users (
 );
 
 
+ALTER TABLE public.users OWNER TO postgres;
 
 --
 -- TOC entry 215 (class 1259 OID 16398)
@@ -340,6 +350,7 @@ CREATE SEQUENCE public.users_user_id_seq
     CACHE 1;
 
 
+ALTER SEQUENCE public.users_user_id_seq OWNER TO postgres;
 
 --
 -- TOC entry 4976 (class 0 OID 0)
@@ -1497,11 +1508,11 @@ ALTER TABLE ONLY public.seats
     ADD CONSTRAINT fk_seat_show FOREIGN KEY (show_id) REFERENCES public.shows(show_id);
 
 
--- Completed on 2026-02-07 22:57:49
+-- Completed on 2026-02-04 21:55:34
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 711ph5HLUhjd25E4keildiwGdwcC1PWYSaOVrQ3YIIaENaU4aW1HDXg7keSVEgb
+\unrestrict f0JXcSAPeXGDVe4vTCIUeKEJQUAlvICN4kslDBtJA3iSDe54zi5E81PjzANAihg
 

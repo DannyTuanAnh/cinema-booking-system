@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"time"
 )
@@ -31,6 +32,7 @@ func (c *authHTTPClient) Login(ctx context.Context, req LoginRequest) (*LoginRes
 
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, c.baseURL+"/auth/login", bytes.NewBuffer(body))
 	if err != nil {
+		log.Println("Error creating login request: [auth_http_client]", err)
 		return nil, nil, err
 	}
 
