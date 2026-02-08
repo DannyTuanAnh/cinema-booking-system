@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	// "strconv"
+	"strconv"
 	"time"
 
 	MiddlewareApiKey "github.com/DannyTuanAnh/cinema-booking-system/bff/middleware/api_key"
@@ -65,19 +65,16 @@ func main() {
 	// 	return // Close the application after generating the API key
 	// }
 
-	// expireHours, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_HOURS"))
-	// expireMinutes, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_MINUTES"))
+	expireHours, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_HOURS"))
+	expireMinutes, _ := strconv.Atoi(os.Getenv("JWT_EXPIRE_MINUTES"))
 
 	jwtCfg := jwt.JWTConfig{
 		Issuer: os.Getenv("JWT_ISSUER"),
 
 		AccessSecret: os.Getenv("JWT_ACCESS_SECRET"),
 
-		// AccessTokenExpire:  time.Duration(expireMinutes) * time.Minute,
-		// RefreshTokenExpire: 7 * time.Duration(expireHours) * time.Hour,
-
-		AccessTokenExpire:  15 * time.Second,
-		RefreshTokenExpire: 1 * time.Minute,
+		AccessTokenExpire:  time.Duration(expireMinutes) * time.Minute,
+		RefreshTokenExpire: 7 * time.Duration(expireHours) * time.Hour,
 	}
 
 	jwtValidator := jwt.NewValidator(jwtCfg)
