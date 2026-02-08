@@ -6,13 +6,7 @@
 -- Dumped from database version 16.11
 -- Dumped by pg_dump version 16.11
 
--- Started on 2026-02-07 22:57:48
-
-
-psql "postgresql://cinema_booking_system_database_user:yAPu3JsZ3wNffDXa0TnTHVII56yaqtP3@dpg-d63jfaer433s73dq9bkg-a.oregon-postgres.render.com/cinema_booking_system_database"
-
-
-
+-- Started on 2026-02-08 09:45:31
 
 SET statement_timeout = 0;
 SET lock_timeout = 0;
@@ -90,6 +84,8 @@ CREATE TABLE public.api_keys (
 );
 
 
+
+
 --
 -- TOC entry 225 (class 1259 OID 16482)
 -- Name: api_keys_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -101,6 +97,7 @@ CREATE SEQUENCE public.api_keys_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
 
 
 --
@@ -125,6 +122,7 @@ CREATE TABLE public.bookings (
 );
 
 
+
 --
 -- TOC entry 221 (class 1259 OID 16444)
 -- Name: bookings_booking_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -137,6 +135,7 @@ CREATE SEQUENCE public.bookings_booking_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
 
 
 --
@@ -182,6 +181,7 @@ CREATE SEQUENCE public.movies_movie_id_seq
     CACHE 1;
 
 
+
 --
 -- TOC entry 4972 (class 0 OID 0)
 -- Dependencies: 223
@@ -208,7 +208,6 @@ CREATE TABLE public.refresh_tokens (
 
 
 
-
 --
 -- TOC entry 227 (class 1259 OID 16504)
 -- Name: refresh_tokens_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -220,7 +219,6 @@ CREATE SEQUENCE public.refresh_tokens_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
 
 
 
@@ -245,7 +243,6 @@ CREATE TABLE public.seats (
     status character varying(10) NOT NULL,
     CONSTRAINT seats_status_check CHECK (((status)::text = ANY ((ARRAY['available'::character varying, 'booked'::character varying])::text[])))
 );
-
 
 
 
@@ -285,8 +282,6 @@ CREATE TABLE public.shows (
 );
 
 
-
-
 --
 -- TOC entry 217 (class 1259 OID 16416)
 -- Name: shows_show_id_seq; Type: SEQUENCE; Schema: public; Owner: postgres
@@ -299,9 +294,6 @@ CREATE SEQUENCE public.shows_show_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
-
-
-
 
 --
 -- TOC entry 4975 (class 0 OID 0)
@@ -338,6 +330,7 @@ CREATE SEQUENCE public.users_user_id_seq
     NO MINVALUE
     NO MAXVALUE
     CACHE 1;
+
 
 
 
@@ -434,12 +427,12 @@ COPY public.bookings (booking_id, user_id, seat_id, bookat) FROM stdin;
 --
 
 COPY public.movies (movie_id, title, duration, description, url_image, rate, genre, release_date, director, cast_list) FROM stdin;
-6	Phi Vụ Động Trời 2	145	Ethan Hunt và đội ngũ của anh tiếp tục cuộc chiến chống lại những kẻ thù nguy hiểm.	../../public/assets/images/film/zootopia.jpg	7.8	Hành động, Phiêu lưu	2024-11-20	Christopher McQuarrie	Tom Cruise, Miles Teller
-7	Thế Hệ Kỳ Tích	138	Câu chuyện cảm động về một thế hệ trẻ và những giấc mơ của họ.	../../public/assets/images/film/the-he-ki-tich.jpg	8.2	Tâm lý, Chính kịch	2024-10-10	Various	Vietnamese Actors
-8	Chân Trời Rực Rỡ	85	Một cuộc hành trình tài liệu khám phá những kỳ tích của thiên nhiên.	../../public/assets/images/film/ctrr.jpg	8.0	Tài liệu	2024-12-01	Documentary Team	Various
-9	Anh Trai Tôi Là Khủng Long	120	Một bộ phim giả tưởng hài hước về anh trai là một chú khủng long.	../../public/assets/images/film/anh-trai-toi-la-khung-long.jpg	7.9	Giả tưởng, Hành động	2024-11-15	Vietnamese Director	Vietnamese Actors
-10	Kumanthong Nhật Bản: Vong Nhi Cúp Bế	156	Một bộ phim kinh dị với những yếu tố tâm linh từ các nền văn hóa Á Đông.	../../public/assets/images/film/kumathong-japan.jpg	7.5	Kinh dị, Tâm linh	2024-12-05	Horror Master	Asian Actors
-5	Avatar: Lửa Và Tro Tàn	197	Tiếp tục cuộc phiêu lưu trên hành tinh Pandora, Jake Sully và nhóm của anh ta phải đối mặt với những thách thức mới.	../../public/assets/images/film/avatar.jpg	8.5	Giả tưởng, Hành động	2024-12-15	James Cameron	Sam Worthington, Zoe Saldana
+6	Phi Vụ Động Trời 2	145	Ethan Hunt và đội ngũ của anh tiếp tục cuộc chiến chống lại những kẻ thù nguy hiểm.	/assets/images/film/zootopia.jpg	7.8	Hành động, Phiêu lưu	2024-11-20	Christopher McQuarrie	Tom Cruise, Miles Teller
+7	Thế Hệ Kỳ Tích	138	Câu chuyện cảm động về một thế hệ trẻ và những giấc mơ của họ.	/assets/images/film/the-he-ki-tich.jpg	8.2	Tâm lý, Chính kịch	2024-10-10	Various	Vietnamese Actors
+8	Chân Trời Rực Rỡ	85	Một cuộc hành trình tài liệu khám phá những kỳ tích của thiên nhiên.	/assets/images/film/ctrr.jpg	8.0	Tài liệu	2024-12-01	Documentary Team	Various
+9	Anh Trai Tôi Là Khủng Long	120	Một bộ phim giả tưởng hài hước về anh trai là một chú khủng long.	/assets/images/film/anh-trai-toi-la-khung-long.jpg	7.9	Giả tưởng, Hành động	2024-11-15	Vietnamese Director	Vietnamese Actors
+10	Kumanthong Nhật Bản: Vong Nhi Cúp Bế	156	Một bộ phim kinh dị với những yếu tố tâm linh từ các nền văn hóa Á Đông.	/assets/images/film/kumathong-japan.jpg	7.5	Kinh dị, Tâm linh	2024-12-05	Horror Master	Asian Actors
+5	Avatar: Lửa Và Tro Tàn	197	Tiếp tục cuộc phiêu lưu trên hành tinh Pandora, Jake Sully và nhóm của anh ta phải đối mặt với những thách thức mới.	/assets/images/film/avatar.jpg	8.5	Giả tưởng, Hành động	2024-12-15	James Cameron	Sam Worthington, Zoe Saldana
 \.
 
 
@@ -1497,11 +1490,10 @@ ALTER TABLE ONLY public.seats
     ADD CONSTRAINT fk_seat_show FOREIGN KEY (show_id) REFERENCES public.shows(show_id);
 
 
--- Completed on 2026-02-07 22:57:49
+-- Completed on 2026-02-08 09:45:32
 
 --
 -- PostgreSQL database dump complete
 --
 
-\unrestrict 711ph5HLUhjd25E4keildiwGdwcC1PWYSaOVrQ3YIIaENaU4aW1HDXg7keSVEgb
 
