@@ -1,4 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import SessionExpiredModal from "../components/SessionExpiredModal";
 import { sessionExpiredEmitter } from "../utils/sessionEmitter";
 
@@ -14,6 +15,7 @@ export const useSession = () => {
 
 export const SessionProvider = ({ children }) => {
   const [showExpiredModal, setShowExpiredModal] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Listen for session expired events
@@ -37,8 +39,8 @@ export const SessionProvider = ({ children }) => {
     localStorage.removeItem("email");
     localStorage.removeItem("token");
     localStorage.removeItem("user");
-    // Redirect to login
-    window.location.href = "/login";
+    // Redirect to login using React Router
+    navigate("/login", { replace: true });
   };
 
   const value = {
