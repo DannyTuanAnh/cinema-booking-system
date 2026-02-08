@@ -3,7 +3,6 @@ package auth_service
 import (
 	"context"
 	"errors"
-	"log"
 	"strconv"
 	"time"
 
@@ -42,7 +41,6 @@ func (s *AuthService) RefreshTokenMaxAge() time.Duration {
 func (s *AuthService) Login(ctx context.Context, email, password string) (string, string, int64, string, string, error) {
 	user, err := s.userRepo.FindByEmail(ctx, email)
 	if err != nil {
-		log.Println("Error finding user by email: [auth_service]", err)
 		return "", "", 0, "", "", errors.New("invalid email")
 	}
 
@@ -52,13 +50,11 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (string
 
 	accessToken, err := s.jwtGen.GenerateAccessToken(ctx, user.ID, user.Email, "user")
 	if err != nil {
-		log.Println("Error generating access token: [auth_service]", err)
 		return "", "", 0, "", "", err
 	}
 
 	refreshToken, err := s.jwtGen.GenerateRefreshToken(ctx, user.ID)
 	if err != nil {
-		log.Println("Error generating refresh token: [auth_service]", err)
 		return "", "", 0, "", "", err
 	}
 
@@ -68,7 +64,6 @@ func (s *AuthService) Login(ctx context.Context, email, password string) (string
 		ExpiresAt: time.Now().Add(s.jwtGen.RefreshTokenMaxAge()),
 	})
 	if err != nil {
-		log.Println("Error saving refresh token: [auth_service]", err)
 		return "", "", 0, "", "", err
 	}
 
