@@ -30,22 +30,14 @@ func NewConnection(config Config) (*sql.DB, error) {
 
 // DefaultConfig returns a default database configuration for local development
 func DefaultConfig() Config {
-	// Ưu tiên DATABASE_URL (Render / Production)
-	if dsn := os.Getenv("DATABASE_URL"); dsn != "" {
-		return Config{
-			DSN: dsn + "?sslmode=require",
-		}
-	}
-
-	// Fallback cho local
 	return Config{
 		DSN: fmt.Sprintf(
-			"host=%s port=%d user=%s password=%s dbname=%s sslmode=disable",
-			"localhost",
-			5432,
-			"postgres",
-			"1",
-			"cinema",
+			"host=%s port=%s user=%s password=%s dbname=%s sslmode=disable",
+			os.Getenv("DB_HOST"),
+			os.Getenv("DB_PORT"),
+			os.Getenv("DB_USER"),
+			os.Getenv("DB_PASSWORD"),
+			os.Getenv("DB_NAME"),
 		),
 	}
 
