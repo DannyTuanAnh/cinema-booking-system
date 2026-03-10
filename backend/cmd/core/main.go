@@ -92,7 +92,7 @@ func main() {
 
 	port := os.Getenv("PORT")
 	if port == "" {
-		port = "8081" // fallback local
+		port = "8080" // fallback local
 	}
 
 	err = r.Run(":" + port)
