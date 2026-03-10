@@ -90,7 +90,7 @@ func main() {
 	// 	err = r.Run(addr)
 	// }
 
-	port := os.Getenv("PORT_CORE")
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8081" // fallback local
 	}

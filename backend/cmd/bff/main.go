@@ -133,7 +133,7 @@ func main() {
 	// 	err = r.Run(addr)
 	// }
 
-	port := os.Getenv("PORT_BFF")
+	port := os.Getenv("PORT")
 	if port == "" {
 		port = "8080" // fallback local
 	}
